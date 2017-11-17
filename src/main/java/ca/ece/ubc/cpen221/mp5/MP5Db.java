@@ -7,6 +7,8 @@ import java.util.function.ToDoubleBiFunction;;
 // It supports querying for objects from the database as well
 // as two basic statistical learning operations on the database.
 
+// Partner Test
+
 public interface MP5Db<T> {
 
 	/**
