@@ -2,7 +2,7 @@ Each dataset represents a database
 
 ## Classes to implement:  
 
-Generic database:
+### Generic database:
   - Contains tables uniquely identified by some identifier
   - Internally represented as an HashMap of Tables
   - Subtypes (Strings):
@@ -11,16 +11,16 @@ Generic database:
 	  - Reviews
 	  - Subclass will implement the MP5Db interface
 
-Table:  
+### Table:  
 - Consists of a key and a set of values
 - Internally represented as a HashMap of Lists
 
 
 ## Operations to implement:
 
-Database:
+### Database:
 
-Representation Invariant:
+#### Representation Invariant:
 - No two tables in the HashMap can be the same
 - HashMap cannot be null
 - HashMap indentifiers are unique objects only
@@ -28,7 +28,7 @@ Representation Invariant:
 - Does not contain more elements than there are unique indentifiers
 - Each Table in HashMap have the same amount of key elements  
 
-Abstraction Function:
+#### Abstraction Function:
 - Takes in a list of tables returns the JSON of each table entry  
 
 - Constructors:
@@ -37,7 +37,7 @@ Abstraction Function:
 	- Pass in a table
 	- Three filenames represeting JSON files
 
-Methods:
+#### Methods:
 - Parse the JSON files into databases
 	- Check proper JSON formatting
 	- The unique identifier must exists for a table entry
@@ -57,21 +57,21 @@ Methods:
 - Cloneable
 - Return the number of entries (Size of database)
 
-Table:
+### Table:
 
-Representation Invariant:
+#### Representation Invariant:
 - Hashmap is not null
 - Is mutable
 - Key values are unique
 - All key values are of the same class type  
 
-Abstraction Function:
+#### Abstraction Function:
 - Takes in a hashmap and returns each key-value pair to construct a table  
 
-Constructors:
+#### Constructors:
 - empty constuctor
 
-Methods:
+#### Methods:
 
 - Add an entry
 - Update an entry
