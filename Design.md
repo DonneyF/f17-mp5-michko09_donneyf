@@ -26,16 +26,18 @@ Representation Invariant:
 - HashMap indentifiers are unique objects only
 - Database is mutable
 - Does not contain more elements than there are unique indentifiers
-- Each Table in HashMap have the same amount of key elements
+- Each Table in HashMap have the same amount of key elements  
 
 Abstraction Function:
-- Takes in a list of tables returns the JSON of each table entry
+- Takes in a list of tables returns the JSON of each table entry  
 
 - Constructors:
 	- Empty
 	- Pass in a database
 	- Pass in a table
 	- Three filenames represeting JSON files
+
+Methods:
 - Parse the JSON files into databases
 	- Check proper JSON formatting
 	- The unique identifier must exists for a table entry
@@ -60,6 +62,16 @@ Table:
 Representation Invariant:
 - Hashmap is not null
 - Is mutable
+- Key values are unique
+- All key values are of the same class type  
+
+Abstraction Function:
+- Takes in a hashmap and returns each key-value pair to construct a table  
+
+Constructors:
+- empty constuctor
+
+Methods:
 
 - Add an entry
 - Update an entry
