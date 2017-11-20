@@ -1,4 +1,4 @@
-Each dataset represents a database  
+For both classes we will be implementing generic classes to ensure comaptibility for a wide range of objects. Subtypes will be implemented for each generic type.
 
 ## Classes to implement:  
 
