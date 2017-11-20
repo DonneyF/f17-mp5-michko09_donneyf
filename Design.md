@@ -20,6 +20,17 @@ Table:
 
 Database:
 
+Representation Invariant:
+- No two tables in the HashMap can be the same
+- HashMap cannot be null
+- HashMap indentifiers are unique objects only
+- Database is mutable
+- Does not contain more elements than there are unique indentifiers
+- Each Table in HashMap have the same amount of key elements
+
+Abstraction Function:
+- Takes in a list of tables returns the JSON of each table entry
+
 - Constructors:
 	- Empty
 	- Pass in a database
@@ -45,6 +56,10 @@ Database:
 - Return the number of entries (Size of database)
 
 Table:
+
+Representation Invariant:
+- Hashmap is not null
+- Is mutable
 
 - Add an entry
 - Update an entry
