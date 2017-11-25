@@ -2,10 +2,10 @@ package ca.ece.ubc.cpen221.mp5.datastructure;
 
 public class Business {
 
-	Table businessTable;
+	private Table businessTable;
 
 	/**
-	 * Creates a Business Constructor which extends methods from Table.java.
+	 * Creates a Business Construc tor which extends methods from Table.java.
 	 * 
 	 * @param ID,
 	 *            where: - it is not null. - it is the unique ID representing a

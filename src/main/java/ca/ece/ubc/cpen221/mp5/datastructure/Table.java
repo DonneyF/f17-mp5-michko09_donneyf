@@ -19,14 +19,23 @@ import java.util.Map;
 
 public class Table <T> {
   
-    private Map<String, List<T>> masterData;
-  
+    Map<String, List<T>> masterData;
+
   	/**
      * Table Constructor that takes a unique ID as an input.
      */
-    public Table () {
+    public Table() {
     	this.masterData = new HashMap<>();
     }
+
+	public Table(Map<String,T> map) {
+		this.masterData = new HashMap<>();
+		for (String key : map.keySet()){
+			List<T> list = new ArrayList<>();
+			list.add(map.get(key));
+			masterData.put(key,list);
+		}
+	}
     
     /**
      * Table Constructor that takes a another table to clone.
@@ -116,7 +125,7 @@ public class Table <T> {
 	public boolean containsValue(Object value) {
     	return masterData.values().stream().filter(list -> list.contains(value)).findFirst().isPresent();
     }
-    
+
  	/**
      * Obtains all data (values) corresponding to a specific key in the table.
      *
@@ -156,9 +165,4 @@ public class Table <T> {
  		    return count;
  		}
 
- 	@Override
-	public String toString(){
-		return masterData.toString();
-	}
- 		      
   }

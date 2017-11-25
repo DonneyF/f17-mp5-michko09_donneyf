@@ -17,9 +17,6 @@ public class TableTest {
         table.clearEntry("SomeID");
         assertTrue(table.getData("SomeID").size() == 0);
 
-        List<String> values = table.getData("AnotherID");
-        assertTrue(values.size() == 1);
-
         assertTrue(table.numEntries() == 2);
 
         table.addEntry("AnotherID", "SomeOtherID");

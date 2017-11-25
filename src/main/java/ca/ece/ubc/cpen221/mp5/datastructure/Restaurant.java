@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Restaurant extends Business {
 	
-	Table restaurantTable;
+	private Table restaurantTable;
 	
 	public Restaurant(Table table) {
 		super(table);

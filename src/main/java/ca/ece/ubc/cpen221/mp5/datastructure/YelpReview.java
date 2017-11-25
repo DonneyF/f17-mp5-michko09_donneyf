@@ -19,7 +19,7 @@ public class YelpReview extends Review {
 	 * @return an integer, which: - is not null. - is the value rating left by the user.
 	 */
 	int getStars() {
-		return (int) reviewTable.getData("stars").get(0);
+		return (int) super.reviewTable.getData("stars").get(0);
 	}
 
 }

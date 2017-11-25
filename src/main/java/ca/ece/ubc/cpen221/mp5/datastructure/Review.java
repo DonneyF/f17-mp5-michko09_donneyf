@@ -1,10 +1,16 @@
 package ca.ece.ubc.cpen221.mp5.datastructure;
 
 public class Review {
-	Table reviewTable;
+	protected Table reviewTable;
+	private Table reviewVotes;
 	
 	public Review(Table table) {
 		this.reviewTable = table;
+	}
+
+	public Review(Table table, Votes votes) {
+		this.reviewTable = table;
+		reviewVotes = votes;
 	}
 	
 	/**

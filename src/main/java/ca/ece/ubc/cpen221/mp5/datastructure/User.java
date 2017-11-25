@@ -3,10 +3,16 @@ package ca.ece.ubc.cpen221.mp5.datastructure;
 // WRITE SPECS LATER
 
 public class User {
-	Table userTable;
+	protected Table userTable;
+	private Table userVotes;
 	
 	public User(Table table) {
 		this.userTable = table;
+	}
+
+	public User(Table table, Votes votes) {
+		this.userTable = table;
+		userVotes = votes;
 	}
 	
 	/**
