@@ -53,7 +53,7 @@ public class Business {
 	 * @return a double, which: - is not null. - is the longitude of the specific
 	 *         business.
 	 */
-	double getLongitude() {
+	public double getLongitude() {
 		return (double) businessTable.getData("longitude").get(0);
 	}
 	
@@ -63,7 +63,7 @@ public class Business {
 	 * @return a double, which: - is not null. - is the latitude of the specific
 	 *         business.
 	 */
-	double getLatitude() {
+	public double getLatitude() {
 		return (double) businessTable.getData("latitude").get(0);
 	}
 	
