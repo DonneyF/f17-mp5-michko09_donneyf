@@ -7,11 +7,13 @@ import java.util.Map;
 
 /**
  * Class:
- *  	
+ * 		Table - stores all "categories" or specific keys of the data structure.
  * 
  * Representation Invariant:
+ * 		- 
  * 
  * Abstraction Function:
+ * 		-
  * 
  */
 
