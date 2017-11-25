@@ -37,28 +37,12 @@ public class Review {
 	}
 	
 	/**
-	 * Obtains the votes made the user on a specific business, by category.
-	 * 
-	 * @return a ___________-, which: - is not null. - is the representation of the votes made by the user.
-	 */
-	// DO VOTES HERE
-	
-	/**
 	 * Obtains the text review written by the user.
 	 * 
 	 * @return a string, which: - is not null. - is the written response left by the user.
 	 */
 	String getText() {
 		return (String) reviewTable.getData("text").get(0);
-	}
-	
-	/**
-	 * Obtains the star rating given by the user.
-	 * 
-	 * @return an integer, which: - is not null. - is the value rating left by the user.
-	 */
-	int getStars() {
-		return (int) reviewTable.getData("stars").get(0);
 	}
 	
 	/**
@@ -105,7 +89,7 @@ public class Review {
 	 */
 	@Override
 	public int hashCode() {
-		return (int) (this.getStars() * 7);
+		return (int) (this.getReviewID().hashCode() * 7);
 	}
 
 }

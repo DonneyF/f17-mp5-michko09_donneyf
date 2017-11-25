@@ -20,15 +20,6 @@ public class User {
 	}
 	
 	/**
-	 * Obtains the number of reviews conducted by the user.
-	 * 
-	 * @return an integer, which: - is not null. - is the number of completed reviews.
-	 */
-	int getReviewCount() {
-		return (int) userTable.getData("review_count").get(0);
-	}
-	
-	/**
 	 * Obtains the type of the data strcuture.
 	 * 
 	 * @return a string, which: - is not null. - is the status of the user.
@@ -58,22 +49,6 @@ public class User {
 	}
 	
 	/**
-	 * Obtains the votes made the user on a specific business, by category.
-	 * 
-	 * @return a ___________-, which: - is not null. - is the representation of the votes made by the user.
-	 */
-	// INPUT VOTES HERE
-	
-	/**
-	 * Obtains the average star rating given by the user.
-	 * 
-	 * @return a double, which: - is not null. - is the value of the current average stars rating given by the user.
-	 */
-	double getAverageStars() {
-		return (double) userTable.getData("average_stars").get(0);
-	}
-	
-	/**
 	 * Compare two User objects for equality
 	 * 
 	 * @param other
@@ -98,6 +73,6 @@ public class User {
 	 */
 	@Override
 	public int hashCode() {
-		return (int) (this.getReviewCount() * this.getAverageStars() * 7);
+		return (int) (this.getName().hashCode() * this.getWebsite().hashCode() * 7);
 	}
 }
