@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class TableTest {
     @Test
     public void test1(){
-        Table<String> table = new Table<>("SomeID");
+        Table<String> table = new Table<>();
         table.addEntry("SomeID", "SomeValue");
         table.addEntry("AnotherID", "AnotherValue");
         assertTrue(table.containsEntry("SomeID"));
@@ -24,5 +24,6 @@ public class TableTest {
 
         table.addEntry("AnotherID", "SomeOtherID");
         assertTrue(table.numValues() == 2);
+
     }
 }
