@@ -19,13 +19,12 @@ import java.util.Map;
 
 public class Table <T> {
   
-    Map<String, List<T>> masterData;
-  	String ID;
+    private Map<String, List<T>> masterData;
   
   	/**
      * Table Constructor that takes a unique ID as an input.
      */
-    public Table() {
+    public Table () {
     	this.masterData = new HashMap<>();
     }
     
@@ -156,5 +155,10 @@ public class Table <T> {
  		}
  		    return count;
  		}
+
+ 	@Override
+	public String toString(){
+		return masterData.toString();
+	}
  		      
   }
