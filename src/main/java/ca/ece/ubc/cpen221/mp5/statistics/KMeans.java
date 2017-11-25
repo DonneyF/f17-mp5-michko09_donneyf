@@ -1,4 +1,4 @@
-package statistics;
+package ca.ece.ubc.cpen221.mp5.statistics;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class KMeans {
 	/**
 	 * 
 	 */
-	private getFirstClusters() {
+	//private getFirstClusters() {
 		
-	}
+	//}
 }
