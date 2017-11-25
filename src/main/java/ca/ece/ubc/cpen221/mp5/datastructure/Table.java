@@ -25,10 +25,15 @@ public class Table <T> {
   	/**
      * Table Constructor that takes a unique ID as an input.
      */
-    public Table(String ID) {
+    public Table() {
     	this.masterData = new HashMap<>();
-      	this.ID = ID;
-      	masterData.put(ID, new ArrayList<T>());
+    }
+    
+    /**
+     * Table Constructor that takes a another table to clone.
+     */
+    public Table(Table copyOf) {
+    	this.masterData = copyOf.masterData;
     }
 
   	/**
