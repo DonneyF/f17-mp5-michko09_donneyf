@@ -17,18 +17,18 @@ import java.util.Map;
  * 
  */
 
-public class Table {
+public class Table <T> {
   
-    Map<String, List<Object>> masterData;
+    Map<String, List<T>> masterData;
   	String ID;
   
   	/**
      * Table Constructor that takes a unique ID as an input.
      */
-    public <T> Table(String ID) {
+    public Table(String ID) {
     	this.masterData = new HashMap<>();
       	this.ID = ID;
-      	masterData.put(ID, new ArrayList<Object>());
+      	masterData.put(ID, new ArrayList<T>());
     }
 
   	/**
@@ -41,11 +41,11 @@ public class Table {
      *      - it is not null.
      *      - it is a specific value type corresponding to the key.
      */
-  	void addEntry(String key, String value) {
+  	public void addEntry(String key, T value) {
   		if (masterData.containsKey(key)){
   			masterData.get(key).add(value);
         } else {
-        	List<Object> tempList = new ArrayList<Object>();
+        	List<T> tempList = new ArrayList<>();
         	tempList.add(value);
         	masterData.put(key, tempList);
         }
@@ -61,7 +61,7 @@ public class Table {
      * @throws IllegalArgumentException, if:
      *      - the current table does not contain the key.
      */
-  	void removeEntry(String key) {
+	public void removeEntry(String key) {
      	if (!masterData.containsKey(key)) throw new IllegalArgumentException("Error: Table does not contain key");
     	masterData.remove(key);
   	}	
@@ -76,7 +76,7 @@ public class Table {
      * @throws IllegalArgumentException, if:
      *      - the current table does not contain the key.
      */
-  	void clearEntry(String key){
+	public void clearEntry(String key){
       	if (!masterData.containsKey(key)) throw new IllegalArgumentException("Error: Table does not contain key");
     	masterData.get(key).clear();
   	}
@@ -93,7 +93,7 @@ public class Table {
      *         false, if:
      *      - the key does not exist.
      */
-  	boolean doesKeyExist(String key){
+	public boolean containsEntry(String key){
     	return masterData.containsKey(key);
     }
   
@@ -109,7 +109,7 @@ public class Table {
      *         false, if:
      *      - the value does not exist.
      */
- 	boolean doesValueExist(Object value) {
+	public boolean containsValue(Object value) {
     	return masterData.values().stream().filter(list -> list.contains(value)).findFirst().isPresent();
     }
     
@@ -124,7 +124,7 @@ public class Table {
      *      - the list contains all values corresponding to the key.
      *      - the list is not null.
      */
- 	List<Object> getData(String key) {
+	public List<T> getData(String key) {
  		return masterData.get(key);
  	}
  		
@@ -134,7 +134,7 @@ public class Table {
      * @return an integer, where:
      * 	    - the number represents the size of the key set in the table. 
      */
- 	int numEntries() {
+	public int numEntries() {
  		return masterData.entrySet().size();
  	}
  	
@@ -144,9 +144,9 @@ public class Table {
      * @return an integer, where:
      * 	    - the number represents the total size of all the lists that correspond to a specific key.
      */
- 	int numValues() {
+	public int numValues() {
  		int count = 0;
- 		for (List<Object> list : masterData.values()) {
+ 		for (List<T> list : masterData.values()) {
  			count += list.size();
  		}
  		    return count;
