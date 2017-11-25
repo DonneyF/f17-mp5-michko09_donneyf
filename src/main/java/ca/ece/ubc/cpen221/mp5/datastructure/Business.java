@@ -3,26 +3,6 @@ package ca.ece.ubc.cpen221.mp5.datastructure;
 public class Business {
 
 	Table businessTable;
-	
-	//boolean openStatus;
-	//String websiteURL;
-	//double longitude;
-	//double latitude;
-	//String businessID;
-	//String name;
-	//String state;
-	//String type;
-	
-	double stars;
-	
-	//String city;
-	//String fullAdress;
-	
-	int reviewCount;
-	
-	//String photoURL;
-	
-	int price;
 
 	/**
 	 * Creates a Business Constructor which extends methods from Table.java.
@@ -93,8 +73,8 @@ public class Business {
 	 * @return a string, which: - is not null. - is the ID of the specific
 	 *         business.
 	 */
-	String getID() {
-		return (String) businessTable.getData("businessID").get(0);
+	String getBusinessID() {
+		return (String) businessTable.getData("business_id").get(0);
 	}
 	
 	/**
@@ -145,11 +125,40 @@ public class Business {
 	}
 	
 	/**
-	 * Obtains the address in which the business is located in.
+	 * Obtains the image representing the business.
 	 * 
-	 * @return a string, which: - is not null. - is the full address of the business.
+	 * @return a string, which: - is not null. - is the photo URL of the business.
 	 */
 	String getPhotoURL() {
 		return (String) businessTable.getData("photo_url").get(0);
 	}
+	
+	/**
+	 * Compare two Business objects for equality
+	 * 
+	 * @param other
+	 * @return true if this Business and the other Business represent the same
+	 *         business.
+	 */
+	@Override
+	public boolean equals(Object other) {
+
+		if (other instanceof Business) {
+			Business otherDoc = (Business) other;
+			return (this.getBusinessID().equals(otherDoc.getBusinessID()));
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Compute the hashCode for this Business object
+	 * 
+	 * @return the hashCode for this Business object
+	 */
+	@Override
+	public int hashCode() {
+		return (int) (this.getLatitude() * this.getLongitude() * 7);
+	}
+	
 }
