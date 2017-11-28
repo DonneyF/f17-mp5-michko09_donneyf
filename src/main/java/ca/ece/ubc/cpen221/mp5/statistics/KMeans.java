@@ -1,6 +1,8 @@
 package ca.ece.ubc.cpen221.mp5.statistics;
 
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +12,7 @@ import java.util.Set;
 
 import ca.ece.ubc.cpen221.mp5.datastructure.Restaurant;
 import ca.ece.ubc.cpen221.mp5.datastructure.Table;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * TODO:
@@ -33,13 +36,13 @@ import ca.ece.ubc.cpen221.mp5.datastructure.Table;
 public class KMeans {
 	public static final double MAX_VALUE = 9999999;
 	
-	Map<Point2D, Set<Restaurant>> currentClusters;
-	List<Set<String>> clusters;
-	List<Restaurant> allRestaurants;
-	List<Point2D> updatedCentroids;
+	private Map<Point2D, Set<Restaurant>> currentClusters;
+	private List<Set<String>> clusters;
+	private List<Restaurant> allRestaurants;
+	private List<Point2D> updatedCentroids;
 	//List<Point2D> centroids;
-	Map<Restaurant, Point2D> allPoints;
-	int numberOfClusters;
+	private Map<Restaurant, Point2D> allPoints;
+	private int numberOfClusters;
 
 	/**
 	 * Create a Constructor for KMeans
@@ -65,7 +68,7 @@ public class KMeans {
 	private void findClusters() {
 		// First we get the initial grouping of restaurants
 		getFirstClusters();
-		getNewCentroids();
+		//getNewCentroids();
 		// Set up the condition for the while loop
 		getNewCentroids();
 		
@@ -105,7 +108,7 @@ public class KMeans {
 					closestCentroid = centroid;
 				}
 			}
-			
+
 			currentClusters.get(closestCentroid).add(place);
 			
 		}
@@ -179,8 +182,10 @@ public class KMeans {
 					noChange = false;
 				}
 			}
-			
-			currentClusters.get(closestCentroid).add(place);
+
+			if (closestCentroid != null) {
+				currentClusters.get(closestCentroid).add(place);
+			}
 			
 		}
 		
@@ -192,5 +197,17 @@ public class KMeans {
 	 */
 	private double getDistance(double x1, double y1, double x2, double y2) {
 		return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+	}
+
+	public void parseResultsToJson (){
+		//if (currentClusters.isEmpty()) throw new IllegalAccessException("Null clusters");
+
+		System.out.println(updatedCentroids);
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			objectMapper.writeValue(new File("data/results.json"), currentClusters);
+		} catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 }

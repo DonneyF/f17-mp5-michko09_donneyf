@@ -2,18 +2,25 @@ package ca.ece.ubc.cpen221.mp5.datastructure;
 
 // WRITE SPECS LATER
 
-public class User {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+public class User extends Table {
 	protected Table userTable;
-	private Table userVotes;
-	
-	public User(Table table) {
-		this.userTable = table;
+	private Votes userVotes;
+
+
+	public User (Table table){
+		userTable = table;
 	}
 
 	public User(Table table, Votes votes) {
-		this.userTable = table;
+		userTable = table;
 		userVotes = votes;
 	}
+
 	
 	/**
 	 * Obtains the website URL for the User's account.
@@ -21,7 +28,7 @@ public class User {
 	 * @return a String, which: - is not null. - is the website URL for the specific
 	 *         user.
 	 */
-	String getWebsite() {
+	public String getWebsite() {
 		return (String) userTable.getData("url").get(0);
 	}
 	
@@ -30,7 +37,7 @@ public class User {
 	 * 
 	 * @return a string, which: - is not null. - is the status of the user.
 	 */
-	String getType() {
+	public String getType() {
 		return (String) userTable.getData("type").get(0);
 	}
 
@@ -40,7 +47,7 @@ public class User {
 	 * @return a string, which: - is not null. - is the ID of the specific
 	 *         user.
 	 */
-	String getUserID() {
+	public String getUserID() {
 		return (String) userTable.getData("user_id").get(0);
 	}
 	
@@ -50,8 +57,12 @@ public class User {
 	 * @return a string, which: - is not null. - is the name of the specific
 	 *         user.
 	 */
-	String getName() {
+	public String getName() {
 		return (String) userTable.getData("name").get(0);
+	}
+
+	public Votes getVotes (){
+		return userVotes;
 	}
 	
 	/**
