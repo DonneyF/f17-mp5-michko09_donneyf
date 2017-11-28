@@ -1,6 +1,5 @@
 package ca.ece.ubc.cpen221.mp5.statistics;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +10,25 @@ import java.util.Set;
 
 import ca.ece.ubc.cpen221.mp5.datastructure.Restaurant;
 import ca.ece.ubc.cpen221.mp5.datastructure.Table;
+
+/**
+ * TODO:
+ * - Main Algorithm is done - just need to test to see if this works, perhaps using the visualize.py.
+ * 
+ * - Currently my final answer is a Map<Point2D, Set<Restaurant>. This corresponds to a point in the 
+ *   general map and restaurants associated in the cluster near that point. We need to return this using
+ *   JSON I believe.
+ *   
+ * - If you look at the input constructor, I made it a List of Restaurants. With this being said, I could
+ * 	 easily use a lambda expression to get all Restaurants in the database and put them in a List, so just
+ *   let me know what the implementation of database is.
+ *   
+ * Logistics:
+ * - If you look at the code, I first do an initial cluster gathering to start off this sequence of finding
+ *   and grouping close clusters. Afterwards, I use a while loop to keep making new clusters and setting new
+ *   centroid points until no more changes are detected, which in that case means we have arrived at the final
+ *   answer. Then the loop ends and we have a final answer stored in the map currentClusters.
+ */
 
 public class KMeans {
 	public static final double MAX_VALUE = 9999999;
@@ -52,7 +70,7 @@ public class KMeans {
 		getNewCentroids();
 		
 		// Loop until there are no more changes in the KMeans structure
-		while(findNewClusters()) {
+		while(!(findNewClusters())) {
 			getNewCentroids();
 		}
 		
@@ -67,7 +85,7 @@ public class KMeans {
 		// We simply use the first number of Restaurants in our list for starting
 		while (count < numberOfClusters) {
 			//centroids.add(allPoints.get(count));
-			Point2D initialCentroid = allPoints.get(count);
+			Point2D initialCentroid = allPoints.get(allRestaurants.get(count));
 			Set<Restaurant> clusters = new HashSet<Restaurant>();
 			currentClusters.put(initialCentroid, clusters);
 			count++;
@@ -141,11 +159,13 @@ public class KMeans {
 	public boolean findNewClusters() {
 		boolean noChange = true;
 		
+		// Reinitialize the currentClusters Map
 		for (Point2D centroid : updatedCentroids) {
 			Set<Restaurant> clusters = new HashSet<Restaurant>();
 			currentClusters.put(centroid, clusters);
 		}
 		
+		// Same code as above, perhaps we could just make this a method?
 		for (Restaurant place : allPoints.keySet()) {
 			double minimumDistance = MAX_VALUE;
 			Point2D point = allPoints.get(place);
