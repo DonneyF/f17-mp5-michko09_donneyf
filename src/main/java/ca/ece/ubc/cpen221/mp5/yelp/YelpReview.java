@@ -1,4 +1,7 @@
-package ca.ece.ubc.cpen221.mp5.datastructure;
+package ca.ece.ubc.cpen221.mp5.yelp;
+
+import ca.ece.ubc.cpen221.mp5.datastructure.Review;
+import ca.ece.ubc.cpen221.mp5.datastructure.Table;
 
 public class YelpReview extends Review {
 	

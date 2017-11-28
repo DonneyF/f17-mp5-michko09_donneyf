@@ -17,7 +17,7 @@ public class Restaurant extends Business {
 	 * 
 	 * @return a List of Strings, which: - is not null. - is a list of neighborhood names.
 	 */
-	List<String> getNeighborhoods() {
+	public List<String> getNeighborhoods() {
 		List<String> finalList = new ArrayList<String>();
 		List<Object> neighborhoods = restaurantTable.getData("neighborhoods");
 		
@@ -33,7 +33,7 @@ public class Restaurant extends Business {
 	 * 
 	 * @return a List of Strings, which: - is not null. - is a list of service types.
 	 */
-	List<String> getCategories() {
+	public List<String> getCategories() {
 		List<String> finalList = new ArrayList<String>();
 		List<Object> categories = restaurantTable.getData("categories");
 		
@@ -49,7 +49,7 @@ public class Restaurant extends Business {
 	 * 
 	 * @return a double, which: - is not null. - is the value of the current average stars rating of the restaurant.
 	 */
-	double getStars() {
+	public double getStars() {
 		return (double) restaurantTable.getData("stars").get(0);
 	}
 	
@@ -58,7 +58,7 @@ public class Restaurant extends Business {
 	 * 
 	 * @return an integer, which: - is not null. - is the number of completed reviews.
 	 */
-	int getReviewCount() {
+	public int getReviewCount() {
 		return (int) restaurantTable.getData("review_count").get(0);
 	}
 	
@@ -67,7 +67,7 @@ public class Restaurant extends Business {
 	 * 
 	 * @return a double, which: - is not null. - is the value of the schools containing the restaurant.
 	 */
-	List<String> getSchools() {
+	public List<String> getSchools() {
 		List<String> finalList = new ArrayList<String>();
 		List<Object> schools = restaurantTable.getData("schools");
 		
@@ -83,7 +83,7 @@ public class Restaurant extends Business {
 	 * 
 	 * @return an integer, which: - is not null. - is the score regarding pricing of the restaurant menu.
 	 */
-	int getPrice() {
+	public int getPrice() {
 		return (int) restaurantTable.getData("price").get(0);
 	}
 	

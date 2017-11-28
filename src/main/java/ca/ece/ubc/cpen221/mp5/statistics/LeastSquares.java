@@ -27,11 +27,11 @@ import ca.ece.ubc.cpen221.mp5.datastructure.User;
  *	 But I have yet to implenent this as I was unsure of how database works.
  */
 public class LeastSquares implements MP5Db<Object> {
-	List<Double> allStars;
-	List<Double> allPrices;
-	List<String> allBusinesses;
-	double SxxAverage;
-	double SyyAverage;
+	private List<Double> allStars;
+	private List<Double> allPrices;
+	private List<String> allBusinesses;
+	private double SxxAverage;
+	private double SyyAverage;
 
 	public LeastSquares() {
 		this.allStars = new ArrayList<Double>();
