@@ -34,6 +34,7 @@ public class KMeans {
 	public static final double MAX_VALUE = 9999999;
 	
 	Map<Point2D, Set<Restaurant>> currentClusters;
+	//Map<Point2D, Set<Restaurant>> lastCluster;
 	List<Set<String>> clusters;
 	List<Restaurant> allRestaurants;
 	List<Point2D> updatedCentroids;
@@ -50,6 +51,7 @@ public class KMeans {
 	public KMeans(List<Restaurant> placeHolder, int k) {
 		this.numberOfClusters = k;
 		this.currentClusters = new HashMap<Point2D, Set<Restaurant>>();
+		//this.lastCluster = new HashMap<Point2D, Set<Restaurant>>();
 		this.updatedCentroids = new ArrayList<Point2D>();
 		this.allRestaurants = placeHolder;
 		//this.centroids = new ArrayList<Point2D>();
@@ -65,7 +67,7 @@ public class KMeans {
 	private void findClusters() {
 		// First we get the initial grouping of restaurants
 		getFirstClusters();
-		getNewCentroids();
+
 		// Set up the condition for the while loop
 		getNewCentroids();
 		
@@ -146,12 +148,20 @@ public class KMeans {
 			
 			Point2D newCentroidPoint = new Point2D.Double(newX / totalRestaurants, newY/ totalRestaurants);
 			newCentroids.add(newCentroidPoint);
+			
+			// Make a last Map reference
+			//Point2D pointCopy = new Point2D.Double(centroids.getX(), centroids.getY());
+			//Set<Restaurant> listCopy = new HashSet<Restaurant>();
+			//listCopy.addAll(currentClusters.get(centroids));
+			//lastCluster.put(pointCopy, listCopy);
+			
 		}
 		
 		currentClusters.clear();
 		updatedCentroids.clear();
 		updatedCentroids.addAll(newCentroids);
 	}
+	
 	
 	/**
 	 * Finds all new clusters resulting from the change in centroid locations.
@@ -176,14 +186,24 @@ public class KMeans {
 				if (distance < minimumDistance) {
 					minimumDistance = distance;
 					closestCentroid = centroid;
+				}
+				
+				if (minimumDistance != MAX_VALUE) {
 					noChange = false;
 				}
 			}
 			
-			currentClusters.get(closestCentroid).add(place);
+			if (closestCentroid != null) {
+				currentClusters.get(closestCentroid).add(place);
+			}
 			
 		}
 		
+		/*
+		if (!(currentClusters.equals(lastCluster))) {
+			noChange = false;
+		}
+		*/
 		return noChange;
 	}
 
