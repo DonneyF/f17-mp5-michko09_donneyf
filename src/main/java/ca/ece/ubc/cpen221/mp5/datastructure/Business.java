@@ -43,7 +43,7 @@ public class Business {
 	 * @return a String, which: - is not null. - is the website URL for the specific
 	 *         business.
 	 */
-	String getWebsite() {
+	public String getWebsite() {
 		return (String) businessTable.getData("url").get(0);
 	}
 	
@@ -73,8 +73,8 @@ public class Business {
 	 * @return a string, which: - is not null. - is the ID of the specific
 	 *         business.
 	 */
-	String getBusinessID() {
-		return (String) businessTable.getData("business_id").get(0);
+	public String getBusinessID() {
+		return businessTable.getID();
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public class Business {
 	 * @return a string, which: - is not null. - is the name of the specific
 	 *         business.
 	 */
-	String getName() {
+	public String getName() {
 		return (String) businessTable.getData("name").get(0);
 	}
 	
@@ -92,7 +92,7 @@ public class Business {
 	 * 
 	 * @return a string, which: - is not null. - is the state where the business resides.
 	 */
-	String getState() {
+	public String getState() {
 		return (String) businessTable.getData("state").get(0);
 	}
 	
@@ -102,7 +102,7 @@ public class Business {
 	 * @return a string, which: - is not null. - is the service of the specific
 	 *         business.
 	 */
-	String getType() {
+	public String getType() {
 		return (String) businessTable.getData("type").get(0);
 	}
 	
@@ -111,7 +111,7 @@ public class Business {
 	 * 
 	 * @return a string, which: - is not null. - is the city where the business resides.
 	 */
-	String getCity() {
+	public String getCity() {
 		return (String) businessTable.getData("city").get(0);
 	}
 	
@@ -129,7 +129,7 @@ public class Business {
 	 * 
 	 * @return a string, which: - is not null. - is the photo URL of the business.
 	 */
-	String getPhotoURL() {
+	public String getPhotoURL() {
 		return (String) businessTable.getData("photo_url").get(0);
 	}
 	

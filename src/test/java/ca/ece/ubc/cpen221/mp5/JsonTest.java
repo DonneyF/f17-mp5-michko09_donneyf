@@ -13,6 +13,7 @@ import java.io.*;
 import java.util.*;
 
 public class JsonTest {
+	/*
     @Test
     public void test1() {
         try {
@@ -43,7 +44,7 @@ public class JsonTest {
                 // total,
                 // total_pages, page, limit, dataset
             }*/
-
+	/*
             System.out.println(node.get("url").asText());
 
             JsonNode votes = node.get("votes");
@@ -54,17 +55,22 @@ public class JsonTest {
             System.err.println(e.getMessage());
         }
     }
-
+    */
     @Test
     public void test2(){
         YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
         ArrayList<Restaurant> list = new ArrayList(db.getRestaurants());
-
+        //System.out.println(list.size());
 
         //System.out.println(restaurant.getNeighborhoods());
-        KMeans kMeans = new KMeans(new ArrayList<>(list), 1);
+        KMeans kMeans = new KMeans(new ArrayList<>(list), 4);
 
         kMeans.parseResultsToJson();
+    }
+    
+    @Test
+    public void test3() {
+    	
     }
 
 }

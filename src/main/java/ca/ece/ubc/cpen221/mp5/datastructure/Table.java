@@ -165,4 +165,7 @@ public class Table<T> {
         return set;
     }
 
+    public String getID() {
+    	return masterData.keySet().toString();
+    }
 }

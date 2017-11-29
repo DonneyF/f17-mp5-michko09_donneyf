@@ -1,13 +1,25 @@
-package ca.ece.ubc.cpen221.mp5.server;
+package ca.ece.ubc.cpen221.mp5;
 
 import java.io.BufferedReader;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+
+import ca.ece.ubc.cpen221.mp5.datastructure.Restaurant;
+import ca.ece.ubc.cpen221.mp5.datastructure.Review;
+import ca.ece.ubc.cpen221.mp5.datastructure.Table;
+import ca.ece.ubc.cpen221.mp5.datastructure.User;
+import ca.ece.ubc.cpen221.mp5.datastructure.Votes;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 
 /**
  * YelpDBServer is a multithreaded server which takes an input command and 
@@ -32,7 +44,11 @@ public class YelpDBServer {
 	private static final String addUser = "ADDUSER";
 	private static final String addReview = "ADDREVIEW";
 	
-	
+	// Instance fields needed to create a database
+	private YelpDb database;
+	private String restaurantsData = "data/restaurants.json";
+	private String reviewsData = "data/reviews.json";
+	private String usersData = "data/users.json";
 	
 	/**
 	 * Creates a YelpDBServer that will listen for connections on port.
@@ -46,6 +62,7 @@ public class YelpDBServer {
 	 */
 	public YelpDBServer(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
+		database = new YelpDb(restaurantsData, reviewsData, usersData);
 	}
 
 	/**
@@ -112,11 +129,11 @@ public class YelpDBServer {
 					.readLine()) {
 				System.err.println("request: " + line);
 				try {
-					
-					System.out.println("I got you");
-					
 					String outcome = determineOperation(line);
 					// compute answer and send back to client
+					/**
+					 * NEED TO FIX OUTPUT LINES
+					 */
 					System.err.println("reply: " + outcome);
 					out.println(outcome);
 				} catch (NumberFormatException e) { // NEED TO FIX THIS LINE
@@ -163,23 +180,114 @@ public class YelpDBServer {
 	 * @param command
 	 */
 	private String getRestaurant(String command) {
-		// Will implement this method
-		return null;
+		String[] splitCommand = command.split(" ");
+		boolean restaurantExists = false;
+		
+		String JSONString = null;
+		
+		if (splitCommand.length == 1) {
+			return "ERR: INVALID_RESTAURANT_STRING";
+		}
+		
+		Set<Restaurant> allRestaurants = database.getRestaurants();
+		
+		for (Restaurant unique : allRestaurants) {
+			if (unique.getBusinessID().equals(splitCommand[1])) {
+				restaurantExists = true;
+				// RETURN IN JSON FORMAT
+			}
+		}
+		
+		if (!(restaurantExists)) {
+			return "ERR: NO_SUCH_RESTAURANT";
+		} 
+		
+		return JSONString;
 	}
 	
 	private String addRestaurant(String command) {
-		// Will implement this method
-		return null;
+		String[] splitCommand = command.split(" ");
+
+		String JSONString = null;
+		
+		if (splitCommand.length == 1) {
+			return "ERR: INVALID_RESTAURANT_STRING";
+		}
+		
+		String possibleJSONString = command.substring(14);
+		// FIRST WE JSON PARSE THIS STRING
+		/**
+		 * IF ERROR IN PARSING:
+		 */
+		if (true) {
+			return "ERR: INVALID_RESTAURANT_STRING";
+		}
+		// map = JSON Parsed table thingy of this.
+		
+		Set<Restaurant> allRestaurants = database.getRestaurants();
+		
+		//Table<String> table = new Table((HashMap<String, String>) map);
+        //allRestaurants.add(new Restaurant(table));
+        
+		return "Restaurant has been added to the database.";
 	}
 	
 	private String addUser(String command) {
-		// Will implement this method
-		return null;
+		String[] splitCommand = command.split(" ");
+
+		String JSONString = null;
+		
+		if (splitCommand.length == 1) {
+			return "ERR: INVALID_USER_STRING";
+		}
+		
+		String possibleJSONString = command.substring(9);
+		// FIRST WE JSON PARSE THIS STRING
+		/**
+		 * IF ERROR IN PARSING:
+		 */
+		if (true) {
+			return "ERR: INVALID_USER_STRING";
+		}
+	
+		// map = JSON Parsed table thingy of this.
+		
+		Set<User> allUsers = database.getUsers();
+				
+		//Table<String> table = new Table((HashMap<String, String>) map);
+		//Votes votes = new Votes((HashMap) map.get("votes"));
+		//allUsers.add(new User(table, votes));
+		        
+		return "User has been added to the database.";
 	}
 	
 	private String addReview(String command) {
-		// Will implement this method
-		return null;
+		String[] splitCommand = command.split(" ");
+
+		String JSONString = null;
+		
+		if (splitCommand.length == 1) {
+			return "ERR: INVALID_REVIEW_STRING";
+		}
+		
+		String possibleJSONString = command.substring(9);
+		// FIRST WE JSON PARSE THIS STRING
+		/**
+		 * IF ERROR IN PARSING:
+		 */
+		if (true) {
+			return "ERR: INVALID_REVIEW_STRING";
+		}
+	
+		// map = JSON Parsed table thingy of this.
+		
+		Set<Review> allReviews = database.getReviews();
+				
+		//Table<String> table = new Table((HashMap<String, String>) map);
+		//Votes votes = new Votes((HashMap) map.get("votes"));
+		//allReviews.add(new Review(table, votes));
+		  
+		return "Review has been added to the database.";
 	}
 	
 	/**

@@ -86,5 +86,6 @@ public class Restaurant extends Business {
 	public int getPrice() {
 		return (int) restaurantTable.getData("price").get(0);
 	}
+
 	
 }

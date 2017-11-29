@@ -27,7 +27,6 @@ public class YelpDb {
 
         for (Map map : parseJSON(reviewsFileName)) {
             Table<String> table = new Table((HashMap<String, String>) map);
-            reviews.add(new Review(table));
             Votes votes = new Votes((HashMap) map.get("votes"));
             reviews.add(new Review(table, votes));
         }
@@ -68,7 +67,15 @@ public class YelpDb {
         return reviews.size() + restaurants.size() + users.size();
     }
 
-    public Set getRestaurants(){
+    public Set<Restaurant> getRestaurants(){
         return restaurants;
+    }
+    
+    public Set<Review> getReviews() {
+    	return reviews;
+    }
+    
+    public Set<User> getUsers() {
+    	return users;
     }
 }

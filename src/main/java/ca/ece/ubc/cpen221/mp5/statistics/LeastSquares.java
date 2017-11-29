@@ -145,7 +145,7 @@ public class LeastSquares implements MP5Db<Object> {
 		 * 6. Get prices of remaining businesses and sum them.
 		 * 
 		 * allPrices = database.stream().map(type -> database.getData("type").toString()).filter(type -> type.equals("business")).map(business_id -> database.getData(business_id).toString())
-		 * 					.filter(business_id -> allBusinesses.contains(business_id)).map(Double::(double) getData(price).toString());
+		 * 					.filter(business_id -> allBusinesses.contains(business_id)).map(Double::(double) getData(price).toString()).collect(Collectors.toList());
 		 */
 	}
 	

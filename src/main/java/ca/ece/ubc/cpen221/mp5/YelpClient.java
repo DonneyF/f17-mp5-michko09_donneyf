@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5.server;
+package ca.ece.ubc.cpen221.mp5;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -68,12 +68,17 @@ public class YelpClient {
         out.close();
         socket.close();
     }
-
+    
+    
+    
+    
+    private static final int N = 100;
+    
     /**
      * Use a FibonacciServer to find the first N Fibonacci numbers.
      */
     // NEED TO FIX THESE LINES, WILL DO TONIGHT
-    
+   
     public static void main(String[] args) {
     	System.out.println("Enter the port number: ");
 		Scanner scanner = new Scanner(System.in);
