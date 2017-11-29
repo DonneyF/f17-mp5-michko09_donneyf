@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.function.ToDoubleBiFunction;
 
 import ca.ece.ubc.cpen221.mp5.MP5Db;
-import ca.ece.ubc.cpen221.mp5.datastructure.User;
 
 /**
  * This one is a little bit more tricky than the one before.

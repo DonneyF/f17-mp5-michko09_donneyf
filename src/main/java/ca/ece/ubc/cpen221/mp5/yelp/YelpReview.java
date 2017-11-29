@@ -1,28 +1,130 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
-import ca.ece.ubc.cpen221.mp5.datastructure.Review;
-import ca.ece.ubc.cpen221.mp5.datastructure.Table;
+import ca.ece.ubc.cpen221.mp5.interfaces.Review;
+import ca.ece.ubc.cpen221.mp5.interfaces.User;
+import ca.ece.ubc.cpen221.mp5.yelp.deserlializers.YelpReviewDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-public class YelpReview extends Review {
-	
-	public YelpReview(Table table) {
-		super(table);
+@JsonDeserialize(using = YelpReviewDeserializer.class)
+public class YelpReview implements Review {
+
+	private String type;
+	private String businessId;
+	private YelpVotes votes;
+	private String reviewId;
+	private String text;
+	private int stars;
+	private String userId;
+	private String date;
+
+	@Override
+	public String getType() {
+		return type;
 	}
-	
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	@Override
+	public String getBusinessId() {
+		return businessId;
+	}
+
+	public void setBusinessId(String businessId) {
+		this.businessId = businessId;
+	}
+
+	public YelpVotes getVotes() {
+		return votes;
+	}
+
+	public void setVotes(YelpVotes votes) {
+		this.votes = votes;
+	}
+
+	@Override
+	public String getReviewId() {
+		return reviewId;
+	}
+
+	public void setReviewId(String reviewId) {
+		this.reviewId = reviewId;
+	}
+
+	@Override
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public int getStars() {
+		return stars;
+	}
+
+	public void setStars(int stars) {
+		this.stars = stars;
+	}
+
+	@Override
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	@Override
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
 	/**
 	 * Obtains the votes made the user on a specific business, by category.
-	 * 
+	 *
 	 * @return a ___________-, which: - is not null. - is the representation of the votes made by the user.
 	 */
-	// DO VOTES HERE
-	
+
 	/**
 	 * Obtains the star rating given by the user.
-	 * 
+	 *
 	 * @return an integer, which: - is not null. - is the value rating left by the user.
 	 */
-	int getStars() {
-		return (int) super.reviewTable.getData("stars").get(0);
+
+	/**
+	 * Compare two Review objects for equality
+	 *
+	 * @param other
+	 * @return true if this Review and the other Review represent the same
+	 *         review.
+	 */
+	@Override
+	public boolean equals(Object other) {
+
+		if (other instanceof User) {
+			Review otherDoc = (Review) other;
+			return (this.getReviewId().equals(otherDoc.getReviewId()));
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Compute the hashCode for this Review object
+	 *
+	 * @return the hashCode for this Review object
+	 */
+	@Override
+	public int hashCode() {
+		return this.getReviewId().hashCode() * 7;
 	}
 
 }

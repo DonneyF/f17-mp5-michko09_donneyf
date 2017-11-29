@@ -1,9 +1,9 @@
 package ca.ece.ubc.cpen221.mp5;
 
-import ca.ece.ubc.cpen221.mp5.datastructure.Table;
-import ca.ece.ubc.cpen221.mp5.datastructure.User;
-import ca.ece.ubc.cpen221.mp5.datastructure.Votes;
-import com.fasterxml.jackson.core.type.TypeReference;
+import ca.ece.ubc.cpen221.mp5.interfaces.Table;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
@@ -55,23 +55,25 @@ public class TablesTest {
     public void test2(){
 
         try {
-            File file = new File("data/usertest.json");
+            File file = new File("data/restaurants.json");
 
             BufferedReader br = new BufferedReader(new FileReader(file));
 
+
             ObjectMapper mapper = new ObjectMapper();
+            //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+/*            SimpleModule module = new SimpleModule();
+            module.addDeserializer(YelpRestaurant.class, new YelpUserDeserializer());
 
-            Map<String, Object> map = mapper.readValue(br.readLine(), new TypeReference<Map<String, Object>>() {});
+            mapper.registerModule(module);*/
+            String line = br.readLine();
+            YelpRestaurant restaurant = mapper.readValue(line, YelpRestaurant.class);
 
-            Table<String> table = new Table(map);
+            System.out.println(line);
 
-            Votes votes = new Votes((HashMap) map.get("votes"));
+            //assertEquals("Chris M.", user.getSchools());
 
-            User user = new User(table, votes);
-
-            assertEquals("Chris M.", user.getName());
-
-            System.out.print(user.getVotes());
+            System.out.print(restaurant.getLatitude());
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,4 +1,4 @@
-package ca.ece.ubc.cpen221.mp5.datastructure;
+package ca.ece.ubc.cpen221.mp5.interfaces;
 
 import java.util.HashMap;
 import java.util.Map;

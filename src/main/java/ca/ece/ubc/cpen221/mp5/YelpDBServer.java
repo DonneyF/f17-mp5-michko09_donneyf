@@ -1,24 +1,18 @@
 package ca.ece.ubc.cpen221.mp5;
 
 import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
-import ca.ece.ubc.cpen221.mp5.datastructure.Restaurant;
-import ca.ece.ubc.cpen221.mp5.datastructure.Review;
-import ca.ece.ubc.cpen221.mp5.datastructure.Table;
-import ca.ece.ubc.cpen221.mp5.datastructure.User;
-import ca.ece.ubc.cpen221.mp5.datastructure.Votes;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
+import ca.ece.ubc.cpen221.mp5.interfaces.Review;
+import ca.ece.ubc.cpen221.mp5.interfaces.User;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 
 /**
@@ -39,14 +33,14 @@ public class YelpDBServer {
 	private ServerSocket serverSocket;
 	
 	// All valid commands for this server
-	private static final String getRestaurant = "GETRESTAURANT";
-	private static final String addRestaurant = "ADDRESTAURANT";
+	private static final String getYelpRestaurant = "GETYelpRestaurant";
+	private static final String addYelpRestaurant = "ADDYelpRestaurant";
 	private static final String addUser = "ADDUSER";
 	private static final String addReview = "ADDREVIEW";
 	
 	// Instance fields needed to create a database
 	private YelpDb database;
-	private String restaurantsData = "data/restaurants.json";
+	private String YelpRestaurantsData = "data/YelpRestaurants.json";
 	private String reviewsData = "data/reviews.json";
 	private String usersData = "data/users.json";
 	
@@ -62,7 +56,7 @@ public class YelpDBServer {
 	 */
 	public YelpDBServer(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
-		database = new YelpDb(restaurantsData, reviewsData, usersData);
+		database = new YelpDb(YelpRestaurantsData, reviewsData, usersData);
 	}
 
 	/**
@@ -156,16 +150,16 @@ public class YelpDBServer {
 	 * 
 	 * @param command, which:
 	 * 		- is one of four command options for the YelpDB:
-	 * 			1. GETRESTAURANT - obtains the details of a restaurant using its unique ID.
+	 * 			1. GETYelpRestaurant - obtains the details of a YelpRestaurant using its unique ID.
 	 * 			2. ADDUSER - adds a user to the database, with all details included.
-	 * 			3. ADDRESTAURANT - adds a restaurant to the database, with all details included.
+	 * 			3. ADDYelpRestaurant - adds a YelpRestaurant to the database, with all details included.
 	 * 			4. ADDREVIEW - adds a review to the database, with all details included.
 	 */
 	String determineOperation(String command) {
-		if (command.substring(0, 13).equals(getRestaurant)) {
-			return getRestaurant(command);
-		} else if (command.substring(0, 13).equals(addRestaurant)) {
-			return addRestaurant(command);
+		if (command.substring(0, 13).equals(getYelpRestaurant)) {
+			return getYelpRestaurant(command);
+		} else if (command.substring(0, 13).equals(addYelpRestaurant)) {
+			return addYelpRestaurant(command);
 		} else if (command.substring(0, 7).equals(addUser)) {
 			return addUser(command);
 		} else if (command.substring(0, 9).equals(addReview)) {
@@ -179,39 +173,39 @@ public class YelpDBServer {
 	 * 
 	 * @param command
 	 */
-	private String getRestaurant(String command) {
+	private String getYelpRestaurant(String command) {
 		String[] splitCommand = command.split(" ");
-		boolean restaurantExists = false;
+		boolean YelpRestaurantExists = false;
 		
 		String JSONString = null;
 		
 		if (splitCommand.length == 1) {
-			return "ERR: INVALID_RESTAURANT_STRING";
+			return "ERR: INVALID_YelpRestaurant_STRING";
 		}
 		
-		Set<Restaurant> allRestaurants = database.getRestaurants();
+		List<YelpRestaurant> allYelpRestaurants = database.getRestaurants();
 		
-		for (Restaurant unique : allRestaurants) {
-			if (unique.getBusinessID().equals(splitCommand[1])) {
-				restaurantExists = true;
+		for (YelpRestaurant unique : allYelpRestaurants) {
+			if (unique.getBusinessId().equals(splitCommand[1])) {
+				YelpRestaurantExists = true;
 				// RETURN IN JSON FORMAT
 			}
 		}
 		
-		if (!(restaurantExists)) {
-			return "ERR: NO_SUCH_RESTAURANT";
+		if (!(YelpRestaurantExists)) {
+			return "ERR: NO_SUCH_YelpRestaurant";
 		} 
 		
 		return JSONString;
 	}
 	
-	private String addRestaurant(String command) {
+	private String addYelpRestaurant(String command) {
 		String[] splitCommand = command.split(" ");
 
 		String JSONString = null;
 		
 		if (splitCommand.length == 1) {
-			return "ERR: INVALID_RESTAURANT_STRING";
+			return "ERR: INVALID_YelpRestaurant_STRING";
 		}
 		
 		String possibleJSONString = command.substring(14);
@@ -220,16 +214,16 @@ public class YelpDBServer {
 		 * IF ERROR IN PARSING:
 		 */
 		if (true) {
-			return "ERR: INVALID_RESTAURANT_STRING";
+			return "ERR: INVALID_YelpRestaurant_STRING";
 		}
 		// map = JSON Parsed table thingy of this.
 		
-		Set<Restaurant> allRestaurants = database.getRestaurants();
+		List<YelpRestaurant> allYelpRestaurants = database.getRestaurants();
 		
 		//Table<String> table = new Table((HashMap<String, String>) map);
-        //allRestaurants.add(new Restaurant(table));
+        //allYelpRestaurants.add(new YelpRestaurant(table));
         
-		return "Restaurant has been added to the database.";
+		return "YelpRestaurant has been added to the database.";
 	}
 	
 	private String addUser(String command) {
@@ -252,7 +246,7 @@ public class YelpDBServer {
 	
 		// map = JSON Parsed table thingy of this.
 		
-		Set<User> allUsers = database.getUsers();
+		List<User> allUsers = database.getUsers();
 				
 		//Table<String> table = new Table((HashMap<String, String>) map);
 		//Votes votes = new Votes((HashMap) map.get("votes"));
@@ -281,7 +275,7 @@ public class YelpDBServer {
 	
 		// map = JSON Parsed table thingy of this.
 		
-		Set<Review> allReviews = database.getReviews();
+		List<Review> allReviews = database.getReviews();
 				
 		//Table<String> table = new Table((HashMap<String, String>) map);
 		//Votes votes = new Votes((HashMap) map.get("votes"));

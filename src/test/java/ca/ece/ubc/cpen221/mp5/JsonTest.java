@@ -1,15 +1,10 @@
 package ca.ece.ubc.cpen221.mp5;
 
-import ca.ece.ubc.cpen221.mp5.datastructure.Database;
-import ca.ece.ubc.cpen221.mp5.datastructure.Restaurant;
 import ca.ece.ubc.cpen221.mp5.statistics.KMeans;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
 import org.junit.Test;
 
-import java.io.*;
 import java.util.*;
 
 public class JsonTest {
@@ -59,11 +54,11 @@ public class JsonTest {
     @Test
     public void test2(){
         YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
-        ArrayList<Restaurant> list = new ArrayList(db.getRestaurants());
-        //System.out.println(list.size());
+        ArrayList<YelpRestaurant> list = new ArrayList(db.getRestaurants());
+        System.out.println(list);
 
         //System.out.println(restaurant.getNeighborhoods());
-        KMeans kMeans = new KMeans(new ArrayList<>(list), 4);
+        KMeans kMeans = new KMeans(new ArrayList<>(list), 2);
 
         kMeans.parseResultsToJson();
     }
