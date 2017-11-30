@@ -1,6 +1,8 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
+import ca.ece.ubc.cpen221.mp5.MP5Db;
 import ca.ece.ubc.cpen221.mp5.interfaces.*;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
@@ -10,9 +12,10 @@ import java.util.*;
 
 public class YelpDb {
 
-    private List<User> users;
-    private List<YelpRestaurant> restaurants;
-    private List<Review> reviews;
+    // Each map contains a the unique ID of the element and corresponding object
+    private Map<String, YelpUser> users;
+    private Map<String, YelpRestaurant> restaurants;
+    private Map<String, YelpReview> reviews;
 
     public YelpDb(String restaurantFileName, String reviewsFileName, String usersFileName) {
         users = parseJSON(usersFileName, YelpUser.class);
@@ -20,8 +23,8 @@ public class YelpDb {
         reviews = parseJSON(reviewsFileName, YelpReview.class);
     }
 
-    private List parseJSON(String filePath, Class<?> tclass) {
-        List<Object> elements = new ArrayList<>();
+    private Map parseJSON(String filePath, Class<?> tclass) {
+        Map<String, Object> elements = new HashMap<>();
         try {
             // Get the file name
             File file = new File(filePath);
@@ -31,7 +34,17 @@ public class YelpDb {
             while ((line = br.readLine()) != null) {
                 ObjectMapper mapper = new ObjectMapper();
                 Object element = mapper.readValue(line, tclass);
-                elements.add(element);
+                switch (tclass.getName()){
+                    case "ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant":
+                        elements.put(((YelpRestaurant)element).getBusinessId(), element);
+                        break;
+                    case "ca.ece.ubc.cpen221.mp5.yelp.YelpUser":
+                        elements.put(((YelpUser)element).getUserId(), element);
+                        break;
+                    case "ca.ece.ubc.cpen221.mp5.yelp.YelpReview":
+                        elements.put(((YelpReview)element).getReviewId(), element);
+                        break;
+                }
             }
             return elements;
         } catch (Exception e) {
@@ -50,14 +63,26 @@ public class YelpDb {
     }
 
     public List<YelpRestaurant> getRestaurants() {
-        return restaurants;
+        return new LinkedList<>(restaurants.values());
     }
     
-    public List<Review> getReviews() {
-    	return reviews;
+    public List<YelpReview> getReviews() {
+        return new LinkedList<>(reviews.values());
     }
     
-    public List<User> getUsers() {
-    	return users;
+    public List<YelpUser> getUsers() {
+        return new LinkedList<>(users.values());
+    }
+
+    public YelpUser getUserData(String userId){
+        return users.get(userId);
+    }
+
+    public YelpRestaurant getRestaurantData(String restaurantId){
+        return restaurants.get(restaurantId);
+    }
+
+    public YelpReview getReviewData(String reviewId){
+        return reviews.get(reviewId);
     }
 }

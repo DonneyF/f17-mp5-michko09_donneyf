@@ -14,6 +14,8 @@ import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
 import ca.ece.ubc.cpen221.mp5.interfaces.Review;
 import ca.ece.ubc.cpen221.mp5.interfaces.User;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
 
 /**
  * YelpDBServer is a multithreaded server which takes an input command and 
@@ -40,7 +42,7 @@ public class YelpDBServer {
 	
 	// Instance fields needed to create a database
 	private YelpDb database;
-	private String YelpRestaurantsData = "data/YelpRestaurants.json";
+	private String YelpRestaurantsData = "data/restaurants.json";
 	private String reviewsData = "data/reviews.json";
 	private String usersData = "data/users.json";
 	
@@ -246,7 +248,7 @@ public class YelpDBServer {
 	
 		// map = JSON Parsed table thingy of this.
 		
-		List<User> allUsers = database.getUsers();
+		List<YelpUser> allUsers = database.getUsers();
 				
 		//Table<String> table = new Table((HashMap<String, String>) map);
 		//Votes votes = new Votes((HashMap) map.get("votes"));
@@ -275,7 +277,7 @@ public class YelpDBServer {
 	
 		// map = JSON Parsed table thingy of this.
 		
-		List<Review> allReviews = database.getReviews();
+		List<YelpReview> allReviews = database.getReviews();
 				
 		//Table<String> table = new Table((HashMap<String, String>) map);
 		//Votes votes = new Votes((HashMap) map.get("votes"));

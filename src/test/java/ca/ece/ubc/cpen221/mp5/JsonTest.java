@@ -1,11 +1,13 @@
 package ca.ece.ubc.cpen221.mp5;
 
 import ca.ece.ubc.cpen221.mp5.statistics.KMeans;
+import ca.ece.ubc.cpen221.mp5.statistics.LeastSquares;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.function.ToDoubleBiFunction;
 
 public class JsonTest {
 	/*
@@ -65,7 +67,15 @@ public class JsonTest {
     
     @Test
     public void test3() {
-    	
+        YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
+        LeastSquares leastSquares = new LeastSquares(db);
+
+        //System.out.println(db.reviews);
+
+        System.out.println(leastSquares.getStars("71RVNcSPEs8rxyxQllMGeQ"));
+        System.out.println(leastSquares.getPrices("71RVNcSPEs8rxyxQllMGeQ"));
+
+        System.out.println(leastSquares.getPredictorFunction("71RVNcSPEs8rxyxQllMGeQ").applyAsDouble(db, db.getRestaurantData("ipgnAjJ5TUBWGmGxxzoiGQ")));
     }
 
 }

@@ -34,7 +34,6 @@ public class YelpReviewDeserializer extends JsonDeserializer<YelpReview> {
         review.setReviewId(node.get(REVIEW_ID).asText());
         review.setUserId(node.get(USER_ID).asText());
         review.setType(node.get(TYPE).asText());
-        review.setUserId(node.get(TEXT).asText());
 
         ObjectMapper mapper = new ObjectMapper();
         review.setVotes(mapper.readValue(node.get(VOTES).toString(), YelpVotes.class));

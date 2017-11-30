@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.function.ToDoubleBiFunction;
+import java.util.stream.Collectors;
 
 import ca.ece.ubc.cpen221.mp5.MP5Db;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
 
 /**
  * This one is a little bit more tricky than the one before.
@@ -25,31 +29,19 @@ import ca.ece.ubc.cpen221.mp5.MP5Db;
  * 		   of the input restaurant we can find the output.
  *	 But I have yet to implenent this as I was unsure of how database works.
  */
-public class LeastSquares implements MP5Db<Object> {
+public class LeastSquares {
 	private List<Double> allStars;
 	private List<Double> allPrices;
-	private List<String> allBusinesses;
+	private YelpDb database;
 	private double SxxAverage;
 	private double SyyAverage;
 
-	public LeastSquares() {
-		this.allStars = new ArrayList<Double>();
-		this.allPrices = new ArrayList<Double>();
-		this.allBusinesses = new ArrayList<String>();
+	public LeastSquares(YelpDb database) {
+		this.allStars = new ArrayList<>();
+		this.allPrices = new ArrayList<>();
 		this.SxxAverage = 0;
 		this.SyyAverage = 0;
-	}
-
-	@Override
-	public Set getMatches(String queryString) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String kMeansClusters_json(int k) {
-		// TODO Auto-generated method stub
-		return null;
+		this.database = database;
 	}
 
 	/**
@@ -85,21 +77,45 @@ public class LeastSquares implements MP5Db<Object> {
 	 *		- Apply given formulas for r_squared.
 	 * 	 
 	 */
-	@Override
+
 	public ToDoubleBiFunction getPredictorFunction(String user) {
 		/**
 		 * ToDoubleBiFunction<dataBase, restaurant_id> predict = (x,y) NEED DATABASE IMPLEMENTATION ON THIS
 		 */
-		
-		// TODO Auto-generated method stub
-		return null;
+		if(database.getUserData(user).getReviewCount() <= 1) throw new IllegalArgumentException("User has one rating or less");
+
+		List<YelpReview> reviews = database.getReviews().stream().filter(review -> review.getUserId().equals(user)).collect(Collectors.toList());
+
+		allPrices = getPrices(user);
+
+		allStars = getStars(user);
+
+		double Sxy = Sxy();
+		double Sxx = Sxx();
+		double Syy = Syy();
+		double b = Sxy / Sxx ;
+		double r_squared = Math.pow(Sxy , 2) / (Syy * Sxx );
+		double a = SyyAverage - b * SxxAverage;
+
+		System.out.println(Sxy);
+
+		// a*x + b where x is the price of the restuarant
+
+		ToDoubleBiFunction<YelpDb, YelpRestaurant> predict = new ToDoubleBiFunction<YelpDb, YelpRestaurant>() {
+			@Override
+			public double applyAsDouble(YelpDb database, YelpRestaurant restaurant) {
+				return a * restaurant.getPrice() + b;
+			}
+		};
+
+		return predict;
 	}
 	
 	/**
 	 * Obtains a list of all the star ratings the user has given out.
-	 * @param user
+	 * @param userId
 	 */
-	void getStars(String user) {
+	public List<Double> getStars(String userId) {
 		/**
 		 * Order:
 		 * 1. Stream database.
@@ -112,40 +128,19 @@ public class LeastSquares implements MP5Db<Object> {
 		 * allStars = database.stream().map(type -> database.getData("type").toString()).filter(type -> type.equals("review")).map(user_id -> database.getData("user_id").toString())
 		 * 					.filter(user_id -> user_id.equals(user)).map(Double::(double) getData(stars).toString());
 		 */
+
+		// Get a list of reviews
+		return database.getReviews().stream().filter(review -> review.getUserId().equals(userId)).map(YelpReview::getStars).map(stars -> (double) stars).collect(Collectors.toList());
 	}
 	
 	/**
 	 * Obtains a list of all prices associated with the business that the user has done 
 	 * a review on.
 	 */
-	void getPrices() {
-		/**
-		 * I have not been able to "write" this code in this class because I don't know what 
-		 * datatype is going to be. From what we've talked I think its just going to be a massive
-		 * list of tables.
-		 * 
-		 * Order:
-		 * 1. Stream database.
-		 * 2. Map each entry to their respective type (business, user, review)
-		 * 3. Remove all entries that are not reviews.
-		 * 4. Find the user_id of each review
-		 * 5. Remove reviews that are not written by the user.
-		 * 6. Find the corresponding business_id of each review and store in a list.
-		 * 
-		 * allBusinesses = database.stream().map(type -> database.getData("type").toString()).filter(type -> type.equals("review")).map(user_id -> database.getData(user_id).toString())
-		 * 					.filter(user_id -> user_id.equals(user)).map(String::getData(business_id).toString());
-		 * 
-		 * Order:
-		 * 1. Stream database.
-		 * 2. Map each entry to its type.
-		 * 3. Remove all entries that are not of type business.
-		 * 4. Get the business_id of all remaining entries.
-		 * 5. Remove businesses that are not contained within the list.
-		 * 6. Get prices of remaining businesses and sum them.
-		 * 
-		 * allPrices = database.stream().map(type -> database.getData("type").toString()).filter(type -> type.equals("business")).map(business_id -> database.getData(business_id).toString())
-		 * 					.filter(business_id -> allBusinesses.contains(business_id)).map(Double::(double) getData(price).toString()).collect(Collectors.toList());
-		 */
+	public List<Double> getPrices(String userId) {
+
+		return database.getReviews().stream().filter(review -> review.getUserId().equals(userId)).map(YelpReview::getBusinessId)
+				.map(businessID -> database.getRestaurantData(businessID).getPrice()).map(price -> (double) price).collect(Collectors.toList());
 	}
 	
 	/**
@@ -154,13 +149,14 @@ public class LeastSquares implements MP5Db<Object> {
 	 */
 	double Sxx() {
 		double average = 0;
-		double sum = 0;
+		double sum;
 		
 		for (Double price : allPrices) {
 			average += price;
 		}
 		
 		SxxAverage = average / allPrices.size();
+
 		
 		/**
 		 * Order:
@@ -168,8 +164,8 @@ public class LeastSquares implements MP5Db<Object> {
 		 * 2. Find the summation result of the formula (x(i) - x(mean))^2 and map it.
 		 * 3. Reduce the list using addition.
 		 */
-		sum = allPrices.stream().map(square -> Math.pow(square - SxxAverage, 2)).reduce(0.0, Double::sum);
-		
+		sum = allPrices.stream().map(price -> Math.pow(price - SxxAverage, 2)).reduce(0.0, Double::sum);
+
 		return sum;
 	}
 	
@@ -193,7 +189,7 @@ public class LeastSquares implements MP5Db<Object> {
 		 * 2. Find the summation result of the formula (x(i) - x(mean))^2 and map it.
 		 * 3. Reduce the list using addition.
 		 */
-		sum = allStars.stream().map(square -> Math.pow(square - SyyAverage, 2)).reduce(0.0, Double::sum);
+		sum = allStars.stream().map(star -> Math.pow(star - SyyAverage, 2)).reduce(0.0, Double::sum);
 		
 		return sum;
 	}
@@ -210,7 +206,6 @@ public class LeastSquares implements MP5Db<Object> {
 		for (int index = 0; index < allStars.size(); index++) {
 			sum += (allPrices.get(index) - SxxAverage) * (allStars.get(index) - SyyAverage);
 		}
-		
 		return sum;
 	}
 
