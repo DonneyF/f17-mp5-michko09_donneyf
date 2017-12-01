@@ -123,14 +123,14 @@ public class YelpDBServer {
 			// each request is a single line containing a number
 			for (String line = in.readLine(); line != null; line = in
 					.readLine()) {
-				System.err.println("request: " + line);
+				//System.err.println("request: " + line);
 				try {
 					String outcome = determineOperation(line);
 					// compute answer and send back to client
 					/**
 					 * NEED TO FIX OUTPUT LINES
 					 */
-					System.err.println("reply: " + outcome);
+					//System.err.println("reply: " + outcome);
 					out.println(outcome);
 				} catch (NumberFormatException e) { // NEED TO FIX THIS LINE
 					// complain about ill-formatted request
@@ -158,16 +158,24 @@ public class YelpDBServer {
 	 * 			4. ADDREVIEW - adds a review to the database, with all details included.
 	 */
 	String determineOperation(String command) {
-		if (command.substring(0, 13).equals(getYelpRestaurant)) {
-			return getYelpRestaurant(command);
-		} else if (command.substring(0, 13).equals(addYelpRestaurant)) {
-			return addYelpRestaurant(command);
-		} else if (command.substring(0, 7).equals(addUser)) {
-			return addUser(command);
-		} else if (command.substring(0, 9).equals(addReview)) {
-			return addReview(command);
+		if (command.length() >= 13) {
+			if (command.substring(0, 13).equals(getYelpRestaurant)) {
+				return getYelpRestaurant(command);
+			} else if (command.substring(0, 13).equals(addYelpRestaurant)) {
+				return addYelpRestaurant(command);
+			} else {
+				return "ERR: ILLEGAL_REQUEST";
+			}
+		} else if (command.length() >= 7) {
+			if (command.substring(0, 7).equals(addUser)) {
+				return addUser(command);
+			} else if (command.substring(0, 9).equals(addReview)) {
+				return addReview(command);
+			} else {
+				return "ERR: ILLEGAL_REQUEST";
+			}
 		} else {
-			throw new IllegalArgumentException("Error: Not a valid operation.");
+			return "ERR: ILLEGAL_REQUEST";
 		}
 	}
 	

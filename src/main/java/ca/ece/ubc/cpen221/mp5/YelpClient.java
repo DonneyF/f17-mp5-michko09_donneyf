@@ -29,7 +29,7 @@ public class YelpClient {
     
     /**
      * Send a request to the server. Requires this is "open".
-     * @param x to find Fibonacci(x)
+     * @param command to find Fibonacci(x)
      * @throws IOException if network or server failure
      */
     public void sendRequest(String command) throws IOException {
@@ -88,7 +88,7 @@ public class YelpClient {
 
            System.out.println("Enter the command: ");
            String nextCommand = scanner.nextLine();
-           while (nextCommand != "") {
+           while (!(nextCommand.isEmpty())) {
         	   client.sendRequest(nextCommand);
         	   System.out.println("Input next Command: ");
         	   nextCommand = scanner.nextLine();
