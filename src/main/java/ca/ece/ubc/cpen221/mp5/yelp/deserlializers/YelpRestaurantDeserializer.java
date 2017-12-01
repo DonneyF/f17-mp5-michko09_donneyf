@@ -1,8 +1,6 @@
 package ca.ece.ubc.cpen221.mp5.yelp.deserlializers;
 
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
-import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
-import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

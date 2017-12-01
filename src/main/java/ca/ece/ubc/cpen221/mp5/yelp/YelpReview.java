@@ -127,4 +127,8 @@ public class YelpReview implements Review {
 		return this.getReviewId().hashCode() * 7;
 	}
 
+	@Override
+	public String toString(){
+		return getReviewId();
+	}
 }

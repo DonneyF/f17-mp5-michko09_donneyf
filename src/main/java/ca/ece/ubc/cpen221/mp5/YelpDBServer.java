@@ -9,13 +9,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
-import ca.ece.ubc.cpen221.mp5.interfaces.Review;
-import ca.ece.ubc.cpen221.mp5.interfaces.User;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * YelpDBServer is a multithreaded server which takes an input command and 
@@ -42,9 +44,10 @@ public class YelpDBServer {
 	
 	// Instance fields needed to create a database
 	private YelpDb database;
-	private String YelpRestaurantsData = "data/restaurants.json";
-	private String reviewsData = "data/reviews.json";
-	private String usersData = "data/users.json";
+	private List<String> IDs;
+	private static final String YelpRestaurantsData = "data/restaurants.json";
+	private static final String reviewsData = "data/reviews.json";
+	private static final String usersData = "data/users.json";
 	
 	/**
 	 * Creates a YelpDBServer that will listen for connections on port.
@@ -59,6 +62,11 @@ public class YelpDBServer {
 	public YelpDBServer(int port) throws IOException {
 		serverSocket = new ServerSocket(port);
 		database = new YelpDb(YelpRestaurantsData, reviewsData, usersData);
+
+		// Get a list of unique IDs.
+		IDs = database.getRestaurants().parallelStream().map(YelpRestaurant::getBusinessId).collect(Collectors.toList());
+		IDs.addAll(database.getReviews().parallelStream().map(YelpReview::getReviewId).collect(Collectors.toList()));
+		IDs.addAll(database.getUsers().parallelStream().map(YelpUser::getUserId).collect(Collectors.toList()));
 	}
 
 	/**
@@ -198,7 +206,12 @@ public class YelpDBServer {
 		for (YelpRestaurant unique : allYelpRestaurants) {
 			if (unique.getBusinessId().equals(splitCommand[1])) {
 				YelpRestaurantExists = true;
-				// RETURN IN JSON FORMAT
+				try {
+					ObjectMapper mapper = new ObjectMapper();
+					JSONString = mapper.writeValueAsString(unique);
+				} catch (JsonProcessingException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -210,15 +223,21 @@ public class YelpDBServer {
 	}
 	
 	private String addYelpRestaurant(String command) {
-		String[] splitCommand = command.split(" ");
-
 		String JSONString = null;
 		
-		if (splitCommand.length == 1) {
+		if (command.split(" ").length == 1) {
 			return "ERR: INVALID_YelpRestaurant_STRING";
 		}
-		
+
+		// Remove ADDRESTAURANT
 		String possibleJSONString = command.substring(14);
+
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			YelpRestaurant yelpRestaurant = mapper.readValue(possibleJSONString, YelpRestaurant.class);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 		// FIRST WE JSON PARSE THIS STRING
 		/**
 		 * IF ERROR IN PARSING:
@@ -310,4 +329,15 @@ public class YelpDBServer {
 			e.printStackTrace();
 		}
 	}
+
+	public String generateRandomID() {
+		String potentialID =  UUID.randomUUID().toString().substring(0, 22);
+
+		while(!IDs.contains(potentialID)) {
+			potentialID = UUID.randomUUID().toString().substring(0, 22);
+		}
+
+		return potentialID;
+	}
+
 }

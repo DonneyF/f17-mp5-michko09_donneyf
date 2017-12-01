@@ -4,7 +4,6 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.List;
 
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -92,7 +91,7 @@ public class KMeans {
 		while (count < numberOfClusters) {
 			// centroids.add(allPoints.get(count));
 			Point2D initialCentroid = allPoints.get(allYelpRestaurants.get(count));
-			Set<YelpRestaurant> clusters = new HashSet<YelpRestaurant>();
+			Set<YelpRestaurant> clusters = new HashSet<>();
 			currentClusters.put(initialCentroid, clusters);
 			count++;
 		}
@@ -124,7 +123,7 @@ public class KMeans {
 	 * latitude.
 	 */
 	private Map<YelpRestaurant, Point2D> getAllPoints() {
-		Map<YelpRestaurant, Point2D> allPoints = new HashMap<YelpRestaurant, Point2D>();
+		Map<YelpRestaurant, Point2D> allPoints = new HashMap<>();
 
 		for (YelpRestaurant place : allYelpRestaurants) {
 			// Use longitude and latitude for points
@@ -139,7 +138,7 @@ public class KMeans {
 	 * Finds all new centroid locations in the database.
 	 */
 	private boolean getNewCentroids() {
-		List<Point2D> newCentroids = new ArrayList<Point2D>();
+		List<Point2D> newCentroids = new ArrayList<>();
 		lastClusterPoints.clear();
 		boolean hasChange = true;
 

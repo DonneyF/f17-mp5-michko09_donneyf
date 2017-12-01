@@ -12,7 +12,7 @@ public class YelpUser implements User {
 	private String type;
 	private String userId;
 	private String name;
-	private String averageStars;
+	private Double averageStars;
 	private YelpVotes votes;
 
 	public String getWebsite() {
@@ -58,11 +58,11 @@ public class YelpUser implements User {
 		this.name = name;
 	}
 
-	public String getAverageStars() {
+	public Double getAverageStars() {
 		return averageStars;
 	}
 
-	public void setAverageStars(String averageStars) {
+	public void setAverageStars(Double averageStars) {
 		this.averageStars = averageStars;
 	}
 
@@ -103,13 +103,7 @@ public class YelpUser implements User {
 	 */
 	@Override
 	public boolean equals(Object other) {
-
-		if (other instanceof User) {
-			User otherDoc = (User) other;
-			return (this.getUserId().equals(otherDoc.getUserId()));
-		} else {
-			return false;
-		}
+		return other instanceof User && (this.getUserId().equals(((YelpUser) other).getUserId()));
 	}
 
 	/**
@@ -120,5 +114,10 @@ public class YelpUser implements User {
 	@Override
 	public int hashCode() {
 		return this.getName().hashCode() * this.getWebsite().hashCode() * 7;
+	}
+
+	@Override
+	public String toString(){
+		return getUserId();
 	}
 }

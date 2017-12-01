@@ -2,8 +2,6 @@ package ca.ece.ubc.cpen221.mp5;
 
 import ca.ece.ubc.cpen221.mp5.interfaces.Table;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
-import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
-import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 

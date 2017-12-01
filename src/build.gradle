@@ -19,7 +19,7 @@ dependencies {
 }
 
 test.testLogging {
-    exceptionFormat = "full";
+    exceptionFormat = "full"
     events "failed", "passed", "skipped", "standardOut", "standardError"
 }
 

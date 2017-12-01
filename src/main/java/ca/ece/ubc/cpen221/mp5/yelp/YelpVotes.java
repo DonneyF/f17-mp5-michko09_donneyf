@@ -9,10 +9,6 @@ public class YelpVotes implements Votes {
     private int useful;
     private int cool;
 
-    public YelpVotes(){
-
-    }
-
     public int getTotalVotes(){
         return funny + useful + cool;
     }
@@ -44,13 +40,18 @@ public class YelpVotes implements Votes {
     @Override
     public String toString(){
         ObjectMapper objectMapper = new ObjectMapper();
-        //Car car = new Car("yellow", "renault");
         try {
             return objectMapper.writeValueAsString(this);
         } catch (Exception e){
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof YelpVotes && this.getCool() == ((YelpVotes) object).getCool() && this.getFunny() == ((YelpVotes) object).getFunny()
+                && this.getUseful() == ((YelpVotes) object).getUseful();
     }
 
 }

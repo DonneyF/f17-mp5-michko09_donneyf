@@ -207,7 +207,7 @@ public class YelpRestaurant implements Business {
 	 */
 
 	/**
-	 * Obtains the customer's evalution of pricing of the restaurant.
+	 * Obtains the customer's evaluation of pricing of the restaurant.
 	 *
 	 * @return an integer, which: - is not null. - is the score regarding pricing of the restaurant menu.
 	 */
@@ -221,9 +221,7 @@ public class YelpRestaurant implements Business {
 	 */
 	@Override
 	public boolean equals(Object other) {
-
 		return other instanceof Business && (this.getBusinessId().equals(((Business)other).getBusinessId()));
-
 	}
 
 	/**
@@ -238,6 +236,6 @@ public class YelpRestaurant implements Business {
 
 	@Override
 	public String toString(){
-		return name;
+		return getBusinessId();
 	}
 }

@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.rmi.CORBA.ValueHandler;
 import java.io.IOException;
 
 public class YelpReviewDeserializer extends JsonDeserializer<YelpReview> {
@@ -34,6 +33,7 @@ public class YelpReviewDeserializer extends JsonDeserializer<YelpReview> {
         review.setReviewId(node.get(REVIEW_ID).asText());
         review.setUserId(node.get(USER_ID).asText());
         review.setType(node.get(TYPE).asText());
+        review.setText(node.get(TEXT).asText());
 
         ObjectMapper mapper = new ObjectMapper();
         review.setVotes(mapper.readValue(node.get(VOTES).toString(), YelpVotes.class));

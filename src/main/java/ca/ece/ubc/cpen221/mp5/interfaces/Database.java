@@ -19,8 +19,8 @@ public class Database<T> {
         database.put(identifier,table);
     }
 
-    public void setEntry(String idetifier, String key, T value){
-        database.get(idetifier).addEntry(key, value);
+    public void setEntry(String identifier, String key, T value){
+        database.get(identifier).addEntry(key, value);
     }
 
     public boolean tableExists(Table table){

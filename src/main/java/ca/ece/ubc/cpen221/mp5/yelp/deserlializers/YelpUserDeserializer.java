@@ -28,7 +28,7 @@ public class YelpUserDeserializer extends JsonDeserializer<YelpUser> {
         user.setWebsite(node.get(URL).asText());
         user.setType(node.get(TYPE).asText());
         user.setUserId(node.get(USER_ID).asText());
-        user.setAverageStars(node.get(AVERAGE_STARS).asText());
+        user.setAverageStars(node.get(AVERAGE_STARS).asDouble());
         user.setName(node.get(NAME).asText());
         user.setReviewCount(node.get(REVIEW_COUNT).asInt());
 

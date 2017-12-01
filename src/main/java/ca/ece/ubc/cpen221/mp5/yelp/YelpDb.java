@@ -1,21 +1,21 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
-import ca.ece.ubc.cpen221.mp5.MP5Db;
-import ca.ece.ubc.cpen221.mp5.interfaces.*;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
+import ca.ece.ubc.cpen221.mp5.statistics.LeastSquares;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
+import java.util.function.ToDoubleBiFunction;
+import java.util.stream.Collectors;
 
 public class YelpDb {
 
     // Each map contains a the unique ID of the element and corresponding object
-    private Map<String, YelpUser> users;
-    private Map<String, YelpRestaurant> restaurants;
-    private Map<String, YelpReview> reviews;
+    private final Map<String, YelpUser> users;
+    private final Map<String, YelpRestaurant> restaurants;
+    private final Map<String, YelpReview> reviews;
 
     public YelpDb(String restaurantFileName, String reviewsFileName, String usersFileName) {
         users = parseJSON(usersFileName, YelpUser.class);
@@ -84,5 +84,10 @@ public class YelpDb {
 
     public YelpReview getReviewData(String reviewId){
         return reviews.get(reviewId);
+    }
+
+    public ToDoubleBiFunction getPredictorFunction(String user) {
+        LeastSquares leastSquares = new LeastSquares(this);
+        return leastSquares.getPredictorFunction(user);
     }
 }
