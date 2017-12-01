@@ -131,14 +131,14 @@ public class YelpDBServer {
 			// each request is a single line containing a number
 			for (String line = in.readLine(); line != null; line = in
 					.readLine()) {
-				//System.err.println("request: " + line);
+				System.err.println("request: " + line);
 				try {
 					String outcome = determineOperation(line);
 					// compute answer and send back to client
 					/**
 					 * NEED TO FIX OUTPUT LINES
 					 */
-					//System.err.println("reply: " + outcome);
+					System.err.println("reply: " + outcome);
 					out.println(outcome);
 				} catch (NumberFormatException e) { // NEED TO FIX THIS LINE
 					// complain about ill-formatted request

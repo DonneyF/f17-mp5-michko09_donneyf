@@ -67,12 +67,7 @@ public class YelpClient {
         out.close();
         socket.close();
     }
-    
-    
-    
-    
-    private static final int N = 100;
-    
+
     /**
      * Use a FibonacciServer to find the first N Fibonacci numbers.
      */
@@ -90,6 +85,8 @@ public class YelpClient {
            String nextCommand = scanner.nextLine();
            while (!(nextCommand.isEmpty())) {
         	   client.sendRequest(nextCommand);
+        	   String reply = client.getReply();
+        	   System.out.println(reply);
         	   System.out.println("Input next Command: ");
         	   nextCommand = scanner.nextLine();
            }
