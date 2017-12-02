@@ -98,7 +98,7 @@ public class QueryTestCases {
 
     @Test
     public void test6() {
-        CharStream stream = new ANTLRInputStream("category(Chinese & Italian) || price = 5 || rating = 5");
+        CharStream stream = new ANTLRInputStream("category(Chinese) || price = 5 || rating = 5");
         QueryLexer lexer = new QueryLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         QueryParser parser = new QueryParser(tokens);
@@ -112,6 +112,26 @@ public class QueryTestCases {
         System.out.println(listener.getMasterList());
     }
 
+    @Test
+    public void test7() {
+        CharStream stream = new ANTLRInputStream("category(Chinese) && price = 5 && rating = 5");
+        QueryLexer lexer = new QueryLexer(stream);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        QueryParser parser = new QueryParser(tokens);
+
+        ParseTree tree = parser.orExpr();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        QueryCreator listener = new QueryCreator();
+        walker.walk(listener, tree);
+
+        System.out.println(listener.getMasterList());
+    }
+
+    @Test
+    public void test8() {
+
+    }
 
 }
 
