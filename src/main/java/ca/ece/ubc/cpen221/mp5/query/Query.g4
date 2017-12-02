@@ -12,7 +12,7 @@ EQ : '=';
 NUM : [1-5] | [1-5] ('.' [0-9])?;
 LPAREN : '(';
 RPAREN : ')';
-STRING : [A-Za-z&'.,\\:\-]+ ( ' ' [A-Za-z&'.,\\:\-]+ )*;
+STRING : [A-Za-z'.]+ ( ' ' [A-Za-z'.]+ | ' ' '&' ' ' [A-Za-z'.]+ )*;
 WS : [ \t\r\n]+ -> skip ;
 
 // Next we define non terminals

@@ -32,8 +32,8 @@ public class QueryCreator extends QueryBaseListener {
         // If this has more than one possible OR pathway, we need to account for all of them
         numOrPaths = ctx.getChildCount() / 2 + 1;
         counter = ctx.getChildCount() / 2 + 1;
-        repeatingFactor = masterList.size() * numOrPaths;
-        indexingFactor = repeatingFactor;
+        repeatingFactor = counter;
+        indexingFactor = numOrPaths;
 
         // If empty, make numPaths number of new HashMaps
         if (masterList.isEmpty()) {
@@ -42,8 +42,12 @@ public class QueryCreator extends QueryBaseListener {
                 masterList.add(new HashMap<>());
                 count--;
             }
-            numOrPaths = 0;
+            if (numOrPaths == 1) {
+                numOrPaths = 0;
+            }
         } else {
+            repeatingFactor = masterList.size() * numOrPaths;
+            indexingFactor = repeatingFactor;
             // Copy each map and account for new number of paths created by the OR Statement
             List<HashMap<String, String>> copy = new ArrayList<HashMap<String, String>>();
             int count = 0;
