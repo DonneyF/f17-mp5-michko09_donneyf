@@ -1,13 +1,12 @@
 package ca.ece.ubc.cpen221.mp5.statistics;
 
+import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
-
-import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
-import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
-import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
 
 public class LeastSquares {
 	private List<Double> allStars;
@@ -50,11 +49,18 @@ public class LeastSquares {
 
 		// a + x * b where x is the price of the restuarant
 
-		return new ToDoubleBiFunction<YelpDb, YelpRestaurant>() {
+		return new ToDoubleBiFunction<YelpDb, String>() {
+			/**
+			 * Predicts the a user's expected rating on a restaurant;
+			 * @param database is not null and contains a restaurant with restaurantId as its ID and an associated price
+			 * @param restaurantId represents the restaurant to generate a prediction for
+			 * @return a rating between 1 and 5 that represents the user's expected rating for this restaurant in this database.
+			 */
 			@Override
-			public double applyAsDouble(YelpDb database1, YelpRestaurant restaurant) {
-				return a + restaurant.getPrice() * b;
+			public double applyAsDouble(YelpDb database, String restaurantId) {
+				return a + database.getRestaurantData(restaurantId).getPrice() * b;
 			}
+
 		};
 	}
 	

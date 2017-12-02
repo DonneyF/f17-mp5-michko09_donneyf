@@ -11,11 +11,15 @@ public class YelpReview implements Review {
 	private String type;
 	private String businessId;
 	private YelpVotes votes;
-	private String reviewId;
+	private final String reviewId;
 	private String text;
 	private int stars;
 	private String userId;
 	private String date;
+
+	public YelpReview(String reviewId){
+		this.reviewId = reviewId;
+	}
 
 	@Override
 	public String getType() {
@@ -46,10 +50,6 @@ public class YelpReview implements Review {
 	@Override
 	public String getReviewId() {
 		return reviewId;
-	}
-
-	public void setReviewId(String reviewId) {
-		this.reviewId = reviewId;
 	}
 
 	@Override

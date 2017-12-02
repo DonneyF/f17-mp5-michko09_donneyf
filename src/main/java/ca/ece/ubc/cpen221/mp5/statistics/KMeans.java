@@ -1,36 +1,15 @@
 package ca.ece.ubc.cpen221.mp5.statistics;
 
+import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-/**
- * TODO: - Main Algorithm is done - just need to test to see if this works,
- * perhaps using the visualize.py.
- * 
- * - Currently my final answer is a Map<Point2D, Set<YelpRestaurant>. This
- * corresponds to a point in the general map and YelpRestaurants associated in the
- * cluster near that point. We need to return this using JSON I believe.
- * 
- * - If you look at the input constructor, I made it a List of YelpRestaurants. With
- * this being said, I could easily use a lambda expression to get all
- * YelpRestaurants in the database and put them in a List, so just let me know what
- * the implementation of database is.
- * 
- * Logistics: - If you look at the code, I first do an initial cluster gathering
- * to start off this sequence of finding and grouping close clusters.
- * Afterwards, I use a while loop to keep making new clusters and setting new
- * centroid points until no more changes are detected, which in that case means
- * we have arrived at the final answer. Then the loop ends and we have a final
- * answer stored in the map currentClusters.
- */
-
 public class KMeans {
-	public static final double MAX_VALUE = 9999999;
+	private static final double MAX_VALUE = 9999999;
 
 	private Map<Point2D, Set<YelpRestaurant>> currentClusters;
 	// private List<Set<String>> clusters;
@@ -59,14 +38,16 @@ public class KMeans {
 		// this.centroids = new ArrayList<Point2D>();
 		// this.clusters = new ArrayList<Set<String>>();
 		this.allPoints = getAllPoints();
-
-		findClusters();
+		if(k != placeHolder.size()){
+			findClusters();
+		}
 	}
 
 	/**
 	 * Method to keep finding new clusters until the final one has been reached.
 	 */
 	private void findClusters() {
+
 		// First we get the initial grouping of YelpRestaurants
 		getFirstClusters();
 
@@ -85,15 +66,14 @@ public class KMeans {
 	 * Gets the first set of clusters in the database.
 	 */
 	private void getFirstClusters() {
-		int count = 0;
 
 		// We simply use the first number of YelpRestaurants in our list for starting
-		while (count < numberOfClusters) {
+		for (int i = 0; currentClusters.keySet().size() < numberOfClusters; i++) {
 			// centroids.add(allPoints.get(count));
-			Point2D initialCentroid = allPoints.get(allYelpRestaurants.get(count));
-			Set<YelpRestaurant> clusters = new HashSet<>();
-			currentClusters.put(initialCentroid, clusters);
-			count++;
+			Point2D initialCentroid = allPoints.get(allYelpRestaurants.get(i));
+			if (!currentClusters.containsKey(initialCentroid)) {
+				currentClusters.put(initialCentroid, new HashSet<>());
+			}
 		}
 
 		// For each YelpRestaurant, we compare their point relative to each center to find
@@ -124,13 +104,11 @@ public class KMeans {
 	 */
 	private Map<YelpRestaurant, Point2D> getAllPoints() {
 		Map<YelpRestaurant, Point2D> allPoints = new HashMap<>();
-
 		for (YelpRestaurant place : allYelpRestaurants) {
 			// Use longitude and latitude for points
 			Point2D point = new Point2D.Double(place.getLatitude(), place.getLongitude());
 			allPoints.put(place, point);
 		}
-
 		return allPoints;
 	}
 
@@ -184,7 +162,7 @@ public class KMeans {
 	/**
 	 * Finds all new clusters resulting from the change in centroid locations.
 	 */
-	public void findNewClusters() {
+	private void findNewClusters() {
 		// boolean noChange = true;
 		currentClusters.clear();
 		// Reinitialize the currentClusters Map
@@ -238,17 +216,29 @@ public class KMeans {
 		//private Map<Point2D, Set<YelpRestaurant>> currentClusters;
 
 		int cluster = 0;
-		for (Point2D point : currentClusters.keySet()){
-			for (YelpRestaurant restaurant : currentClusters.get(point)){
-				Map<String ,Object> entry = new LinkedHashMap<>();
-				entry.put("x", restaurant.getLatitude());
-				entry.put("y", restaurant.getLongitude());
-				entry.put("name", restaurant.getName());
-				entry.put("cluster", cluster);
+		if (numberOfClusters != allYelpRestaurants.size()) {
+			for (Point2D point : currentClusters.keySet()) {
+				for (YelpRestaurant restaurant : currentClusters.get(point)) {
+					Map<String, Object> entry = new LinkedHashMap<>();
+					entry.put("x", restaurant.getLatitude());
+					entry.put("y", restaurant.getLongitude());
+					entry.put("name", restaurant.getName());
+					entry.put("cluster", cluster);
+					entry.put("weight", 1.0);
+					results.add(entry);
+				}
+				cluster++;
+			}
+		} else {
+			for (int i = 0; i < numberOfClusters; i++){
+				Map<String, Object> entry = new LinkedHashMap<>();
+				entry.put("x", allYelpRestaurants.get(i).getLatitude());
+				entry.put("y", allYelpRestaurants.get(i).getLongitude());
+				entry.put("name", allYelpRestaurants.get(i).getName());
+				entry.put("cluster", i);
 				entry.put("weight", 1.0);
 				results.add(entry);
 			}
-			cluster++;
 		}
 
 		try {
@@ -257,4 +247,5 @@ public class KMeans {
 			e.printStackTrace();
 		}
 	}
+
 }

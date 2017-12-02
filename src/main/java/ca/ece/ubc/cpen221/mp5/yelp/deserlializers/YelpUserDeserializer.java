@@ -3,7 +3,6 @@ package ca.ece.ubc.cpen221.mp5.yelp.deserlializers;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpVotes;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,19 +20,18 @@ public class YelpUserDeserializer extends JsonDeserializer<YelpUser> {
     private static final String AVERAGE_STARS = "average_stars";
     private static final String VOTES = "votes";
 
-    public YelpUser deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public YelpUser deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
-        YelpUser user = new YelpUser();
-        user.setWebsite(node.get(URL).asText());
-        user.setType(node.get(TYPE).asText());
-        user.setUserId(node.get(USER_ID).asText());
-        user.setAverageStars(node.get(AVERAGE_STARS).asDouble());
-        user.setName(node.get(NAME).asText());
-        user.setReviewCount(node.get(REVIEW_COUNT).asInt());
+        YelpUser user = new YelpUser(node.get(USER_ID).asText());
+        if(node.has(URL)) user.setWebsite(node.get(URL).asText());
+        if(node.has(TYPE)) user.setType(node.get(TYPE).asText());
+        if(node.has(AVERAGE_STARS)) user.setAverageStars(node.get(AVERAGE_STARS).asDouble());
+        if(node.has(NAME)) user.setName(node.get(NAME).asText());
+        if(node.has(REVIEW_COUNT)) user.setReviewCount(node.get(REVIEW_COUNT).asInt());
 
         ObjectMapper mapper = new ObjectMapper();
-        user.setVotes(mapper.readValue(node.get(VOTES).toString(), YelpVotes.class));
+        if(node.has(VOTES)) user.setVotes(mapper.readValue(node.get(VOTES).toString(), YelpVotes.class));
 
         return user;
     }

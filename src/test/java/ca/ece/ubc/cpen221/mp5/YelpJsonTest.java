@@ -1,12 +1,13 @@
 package ca.ece.ubc.cpen221.mp5;
 
 import ca.ece.ubc.cpen221.mp5.statistics.KMeans;
-import ca.ece.ubc.cpen221.mp5.statistics.LeastSquares;
 import ca.ece.ubc.cpen221.mp5.yelp.*;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -53,20 +54,20 @@ public class YelpJsonTest {
 
             assertEquals(true,restaurant.isOpen());
             assertEquals("http://www.yelp.com/biz/jasmine-thai-berkeley", restaurant.getUrl());
-            assertEquals(-122.2602981d, restaurant.getLongitude());
+            assertEquals(-122.2602981d, restaurant.getLongitude(), 0.001);
             assertEquals("UC Campus Area",restaurant.getNeighborhoods().get(0));
             assertEquals("BJKIoQa5N2T_oDlLVf467Q", restaurant.getBusinessId());
             assertEquals("Jasmine Thai", restaurant.getName());
             assertEquals("Thai", restaurant.getCategories().get(0));
             assertEquals("CA", restaurant.getState());
             assertEquals("business", restaurant.getType());
-            assertEquals(3.0d, restaurant.getStars());
+            assertEquals(3.0d, restaurant.getStars(), 0.1);
             assertEquals("Berkeley", restaurant.getCity());
             assertTrue(restaurant.getAddress().contains("1805 Euclid Ave"));
             assertEquals(52, restaurant.getReviewCount());
             assertEquals("http://s3-media2.ak.yelpcdn.com/bphoto/ZwTUUb-6jkuzMDBBsUV6Eg/ms.jpg", restaurant.getPhotoUrl());
             assertEquals("University of California at Berkeley", restaurant.getSchools().get(0));
-            assertEquals(37.8759615, restaurant.getLatitude());
+            assertEquals(37.8759615, restaurant.getLatitude(), 0.1);
             assertEquals(2, restaurant.getPrice());
         } catch (Exception e){
             fail(e.getMessage());
@@ -128,32 +129,31 @@ public class YelpJsonTest {
         } catch (Exception e){
             fail(e.getMessage());
         }
+    }
 
+    @Test
+    public void test5(){
+        // Test invalid json. Should throw a JsonParseException
+        String json = "{\"url\": \"http://www.yelp.com/us funny\": 35, \"useful\": 21, \"cool\": 14}, " +
+                "\"review_count\": 2: 3.89655172413793}\n";
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            YelpUser user = mapper.readValue(json, YelpUser.class);
+        } catch (IOException e){
+            assertTrue(e.getClass().equals(JsonParseException.class));
+        }
     }
 
     @Test
     public void test10(){
         YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
-        ArrayList<YelpRestaurant> list = new ArrayList(db.getRestaurants());
+        ArrayList<YelpRestaurant> list = new ArrayList<>(db.getRestaurants());
         System.out.println(list);
 
         //System.out.println(restaurant.getNeighborhoods());
-        KMeans kMeans = new KMeans(new ArrayList<>(list), 2);
+        KMeans kMeans = new KMeans(new ArrayList<>(list), 135);
 
         kMeans.parseResultsToJson();
-    }
-    
-    @Test
-    public void test11() {
-        YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
-        LeastSquares leastSquares = new LeastSquares(db);
-
-        //System.out.println(db.reviews);
-
-        System.out.println("Stars: " + leastSquares.getStars("71RVNcSPEs8rxyxQllMGeQ"));
-        System.out.println("Prices: " + leastSquares.getPrices("71RVNcSPEs8rxyxQllMGeQ"));
-
-        System.out.println(leastSquares.getPredictorFunction("71RVNcSPEs8rxyxQllMGeQ").applyAsDouble(db, db.getRestaurantData("ipgnAjJ5TUBWGmGxxzoiGQ")));
     }
 
 }

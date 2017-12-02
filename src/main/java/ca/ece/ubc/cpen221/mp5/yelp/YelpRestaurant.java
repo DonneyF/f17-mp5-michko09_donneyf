@@ -15,7 +15,7 @@ public class YelpRestaurant implements Business {
 	private double longitude;
 	private double latitude;
 	private List<String> neighborhoods;
-	private String businessId;
+	private final String businessId;
 	private String name;
 	private List<String> categories;
 	private String state;
@@ -27,6 +27,10 @@ public class YelpRestaurant implements Business {
 	private String photoUrl;
 	private List<String> schools;
 	private int price;
+
+	public YelpRestaurant(String businessId){
+		this.businessId = businessId;
+	}
 
 	@Override
 	public boolean isOpen() {
@@ -76,10 +80,6 @@ public class YelpRestaurant implements Business {
 	@Override
 	public String getBusinessId() {
 		return businessId;
-	}
-
-	public void setBusinessId(String businessId) {
-		this.businessId = businessId;
 	}
 
 	@Override

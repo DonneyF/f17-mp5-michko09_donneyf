@@ -10,10 +10,14 @@ public class YelpUser implements User {
 	private String url;
 	private int reviewCount;
 	private String type;
-	private String userId;
+	private final String userId;
 	private String name;
 	private Double averageStars;
 	private YelpVotes votes;
+
+	public YelpUser(String userId){
+		this.userId = userId;
+	}
 
 	public String getWebsite() {
 		return url;
@@ -43,10 +47,6 @@ public class YelpUser implements User {
 	@Override
 	public String getUserId() {
 		return userId;
-	}
-
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 
 	@Override

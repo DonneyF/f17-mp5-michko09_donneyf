@@ -1,16 +1,17 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
 
+import ca.ece.ubc.cpen221.mp5.interfaces.MP5Database;
 import ca.ece.ubc.cpen221.mp5.statistics.LeastSquares;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 import java.util.function.ToDoubleBiFunction;
-import java.util.stream.Collectors;
 
-public class YelpDb {
+public class YelpDb extends MP5Database<YelpRestaurant> {
 
     // Each map contains a the unique ID of the element and corresponding object
     private final Map<String, YelpUser> users;
@@ -86,7 +87,44 @@ public class YelpDb {
         return reviews.get(reviewId);
     }
 
-    public ToDoubleBiFunction getPredictorFunction(String user) {
+    public void addUser(String userJson){
+        try {
+            YelpUser user = new ObjectMapper().readValue(userJson, YelpUser.class);
+            users.put(user.getUserId(), user);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void addRestaurant(String restaurantJson){
+        try {
+            YelpRestaurant restaurant = new ObjectMapper().readValue(restaurantJson, YelpRestaurant.class);
+            restaurants.put(restaurant.getBusinessId(), restaurant);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void addReview(String reviewJson){
+        try {
+            YelpReview review = new ObjectMapper().readValue(reviewJson, YelpReview.class);
+            reviews.put(review.getReviewId(), review);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Set getMatches(String queryString) {
+        return null;
+    }
+
+    @Override
+    public String kMeansClusters_json(int k) {
+        return null;
+    }
+
+    public ToDoubleBiFunction<YelpDb, String> getPredictorFunction(String user) {
         LeastSquares leastSquares = new LeastSquares(this);
         return leastSquares.getPredictorFunction(user);
     }
