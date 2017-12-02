@@ -8,15 +8,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * YelpDBServer is a multithreaded server which takes an input command and
@@ -40,31 +37,9 @@ public class YelpDBServer {
 
     // Instance fields needed to create a database
     private YelpDb database;
-    private List<String> IDs;
     private static final String YelpRestaurantsData = "data/restaurants.json";
     private static final String reviewsData = "data/reviews.json";
     private static final String usersData = "data/users.json";
-    private static ObjectNode genericUser;
-    private static ObjectNode genericRestaurant;
-    private static ObjectNode genericReview;
-
-    // Default user JSON objects
-    static {
-        String defaultUser = "{\"url\": \"http://www.yelp.com/\", \"votes\": {}, \"review_count\": 0, \"type\": \"user\", \"user_id\": \"42\", \"name\": \"John Doe\", \"average_stars\": 0}";
-
-        String defaultRestaurant = "{\"open\": true, \"url\": \"http://www.yelp.com/\", \"neighborhoods\": [], \"business_id\": \"gclB3ED6uk6viWlolSb_uA\", \"name\": \"Cafe 3\", \"categories\": [], \"type\": \"business\", \"review_count\": 0, \"schools\": []}";
-
-        String defaultReview = "{\"type\": \"review\", \"votes\": {}, \"review_id\": \"0a-pCW4guXIlWNpVeBHChg\", \"text\": \"Some text\"}";
-
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            genericUser = (ObjectNode) mapper.readTree(defaultUser);
-            genericRestaurant = (ObjectNode) mapper.readTree(defaultRestaurant);
-            genericReview = (ObjectNode) mapper.readTree(defaultReview);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Creates a YelpDBServer that will listen for connections on port.
@@ -78,12 +53,7 @@ public class YelpDBServer {
     public YelpDBServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         database = new YelpDb(YelpRestaurantsData, reviewsData, usersData);
-
-        // Get a list of unique IDs.
-        IDs = database.getRestaurants().parallelStream().map(YelpRestaurant::getBusinessId).collect(Collectors.toList());
-        IDs.addAll(database.getReviews().parallelStream().map(YelpReview::getReviewId).collect(Collectors.toList()));
-        IDs.addAll(database.getUsers().parallelStream().map(YelpUser::getUserId).collect(Collectors.toList()));
-    }
+        }
 
     /**
      * Runs the server as it listens for input connections and handles them.
@@ -222,24 +192,12 @@ public class YelpDBServer {
             return "ERR: INVALID_YelpRestaurant_STRING";
         }
         // Remove ADDRESTAURANT
-        String possibleJSONString = command.substring(addYelpRestaurant.length());
-
-        // Add restaurant to database
-        ObjectNode restaurant = genericRestaurant.deepCopy();
-        ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
         try {
-            // Verify JSON by adding to the ObjectNode. Copy statements from input to generic and set values
-            ObjectNode input = (ObjectNode) mapper.readTree(possibleJSONString);
-            // Get a random ID
-            String id = generateRandomID();
-            // Parse business ID and url. Input must contain business name
-            if (!input.toString().contains("name")) return "ERR: INVALID_YelpRestaurant_STRING_NO_NAME";
-            input.put("business_id", id);
-            input.put("url", "http://www.yelp.com/biz/" + input.get("name").asText().
-                    replaceAll("\\s", "-").replaceAll("[^a-zA-Z0-9\\\\s\\-]", "").toLowerCase());
-            restaurant.setAll(input);
-            database.addRestaurant(restaurant.toString());
-            return "RESTAURANT_ADD_SUCCESS: " + restaurant.toString();
+            String possibleJSONString = command.substring(addYelpRestaurant.length());
+
+            YelpRestaurant yelpRestaurant = database.addRestaurant(possibleJSONString);
+
+            return "RESTAURANT_ADD_SUCCESS: " + yelpRestaurant.toString();
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_YelpRestaurant_STRING";
@@ -256,25 +214,12 @@ public class YelpDBServer {
             return "ERR: INVALID_USER_STRING";
         }
 
-        String possibleJSONString = command.substring(addUser.length());
-
-        ObjectNode user = genericUser.deepCopy();
-
-        ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
         try {
-            // Verify JSON by adding to the ObjectNode. Copy statements from input to generic and set values
-            ObjectNode input = (ObjectNode) mapper.readTree(possibleJSONString);
-            // Get a random ID
-            String id = generateRandomID();
-            // Parse user ID and url. Input must contain business name
-            if (!input.toString().contains("name")) return "ERR: INVALID_YelpUser_STRING_NO_NAME";
-            input.put("user_id", id);
-            input.put("url", "http://www.yelp.com/user_details?userid=" + id);
+            String possibleJSONString = command.substring(addUser.length());
 
-            user.setAll(input);
-            database.addUser(user.toString());
+            YelpUser yelpUser = database.addUser(possibleJSONString);
 
-            return "USER_ADD_SUCCESS: " + user.toString();
+            return "USER_ADD_SUCCESS: " + yelpUser.toString();
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_YelpUser_STRING";
@@ -288,30 +233,15 @@ public class YelpDBServer {
     private String addReview(String command) {
         String[] splitCommand = command.split(" ");
 
-        String JSONString = null;
-
         if (splitCommand.length == 1) {
             return "ERR: INVALID_REVIEW_STRING";
         }
-
+        try {
         String possibleJSONString = command.substring(addReview.length());
 
-        ObjectNode review = genericReview.deepCopy();
+        YelpReview yelpReview = database.addReview(possibleJSONString);
 
-        ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
-        try {
-            // Verify JSON by adding to the ObjectNode. Copy statements from input to generic and set values
-            ObjectNode input = (ObjectNode) mapper.readTree(possibleJSONString);
-            // Get a random ID
-            String id = generateRandomID();
-            // Parse user ID and url. Input must contain business name
-            if (!input.toString().contains("text")) return "ERR: INVALID_YelpReview_STRING_NO_TEXT";
-            input.put("review_id", id);
-
-            review.setAll(input);
-            database.addUser(review.toString());
-
-            return "REVIEW_ADD_SUCCESS: " + review.toString();
+        return "REVIEW_ADD_SUCCESS:" + yelpReview.toString();
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_YelpRestaurant_STRING";
@@ -334,15 +264,6 @@ public class YelpDBServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private String generateRandomID() {
-        String potentialID;
-        do {
-            potentialID = UUID.randomUUID().toString().replaceAll("[\\-]", "").substring(0, 22);
-        } while (IDs.contains(potentialID));
-
-        return potentialID;
     }
 
 }

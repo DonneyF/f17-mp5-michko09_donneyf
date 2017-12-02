@@ -15,8 +15,7 @@ import java.util.UUID;
 
 import static org.junit.Assert.*;
 
-public class TablesTest {
-
+public class OtherTest {
 
     @Test
     public void test2(){

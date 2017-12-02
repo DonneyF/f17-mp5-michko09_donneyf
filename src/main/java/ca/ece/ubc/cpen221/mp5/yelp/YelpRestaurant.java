@@ -1,13 +1,14 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
 import ca.ece.ubc.cpen221.mp5.interfaces.Business;
+import ca.ece.ubc.cpen221.mp5.interfaces.Restaurant;
 import ca.ece.ubc.cpen221.mp5.yelp.deserlializers.YelpRestaurantDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
 @JsonDeserialize(using = YelpRestaurantDeserializer.class)
-public class YelpRestaurant implements Business {
+public class YelpRestaurant implements Restaurant {
 
 	// Non-JSON fields: businessId, reviewCount, photoUrl
 	private boolean open;

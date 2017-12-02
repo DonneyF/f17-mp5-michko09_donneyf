@@ -1,3 +1,4 @@
+/*
 package ca.ece.ubc.cpen221.mp5.query;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -67,3 +68,4 @@ public class QueryTestCases {
     }
 
 }
+*/
