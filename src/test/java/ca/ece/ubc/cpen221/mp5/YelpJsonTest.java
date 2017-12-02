@@ -182,8 +182,6 @@ public class YelpJsonTest {
         } catch (Exception e){
             fail(e.getMessage());
         }
-
-
     }
 
 }

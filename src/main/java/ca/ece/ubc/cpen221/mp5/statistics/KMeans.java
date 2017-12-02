@@ -224,7 +224,7 @@ public class KMeans {
 		return results;
 	}
 
-	public void toJson() {
+	public void toFile(String pathname) {
 		List<Map<String, Object>> results = toList();
 		for(Map map : results){
 			map.remove("centroid");
@@ -232,9 +232,23 @@ public class KMeans {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		try {
-			objectMapper.writeValue(new File("data/results.json"), results);
+			objectMapper.writeValue(new File(pathname), results);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	public String toJson() {
+		List<Map<String, Object>> results = toList();
+		for(Map map : results){
+			map.remove("centroid");
+		}
+		ObjectMapper objectMapper = new ObjectMapper();
+
+		try {
+			return objectMapper.writeValueAsString(results);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
