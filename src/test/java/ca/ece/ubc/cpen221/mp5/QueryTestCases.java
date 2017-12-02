@@ -1,6 +1,8 @@
-/*
-package ca.ece.ubc.cpen221.mp5.query;
+package ca.ece.ubc.cpen221.mp5;
 
+import ca.ece.ubc.cpen221.mp5.query.QueryCreator;
+import ca.ece.ubc.cpen221.mp5.query.QueryLexer;
+import ca.ece.ubc.cpen221.mp5.query.QueryParser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -112,4 +114,4 @@ public class QueryTestCases {
 
 
 }
-*/
+
