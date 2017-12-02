@@ -32,17 +32,14 @@ public class YelpRestaurant implements Business {
 		this.businessId = businessId;
 	}
 
-	@Override
 	public boolean isOpen() {
 		return open;
 	}
 
-	@Override
 	public void setOpen(boolean open) {
 		this.open = open;
 	}
 
-	@Override
 	public String getUrl() {
 		return url;
 	}
@@ -51,7 +48,6 @@ public class YelpRestaurant implements Business {
 		this.url = url;
 	}
 
-	@Override
 	public double getLongitude() {
 		return longitude;
 	}
@@ -60,7 +56,6 @@ public class YelpRestaurant implements Business {
 		this.longitude = longitude;
 	}
 
-	@Override
 	public double getLatitude() {
 		return latitude;
 	}
@@ -82,7 +77,6 @@ public class YelpRestaurant implements Business {
 		return businessId;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -99,7 +93,6 @@ public class YelpRestaurant implements Business {
 		this.categories = categories;
 	}
 
-	@Override
 	public String getState() {
 		return state;
 	}
@@ -108,7 +101,6 @@ public class YelpRestaurant implements Business {
 		this.state = state;
 	}
 
-	@Override
 	public String getType() {
 		return type;
 	}
@@ -125,7 +117,6 @@ public class YelpRestaurant implements Business {
 		this.stars = stars;
 	}
 
-	@Override
 	public String getCity() {
 		return city;
 	}
@@ -134,7 +125,6 @@ public class YelpRestaurant implements Business {
 		this.city = city;
 	}
 
-	@Override
 	public String getAddress() {
 		return address;
 	}
@@ -151,7 +141,6 @@ public class YelpRestaurant implements Business {
 		this.reviewCount = reviewCount;
 	}
 
-	@Override
 	public String getPhotoUrl() {
 		return photoUrl;
 	}
@@ -236,6 +225,6 @@ public class YelpRestaurant implements Business {
 
 	@Override
 	public String toString(){
-		return getBusinessId();
+		return getName();
 	}
 }

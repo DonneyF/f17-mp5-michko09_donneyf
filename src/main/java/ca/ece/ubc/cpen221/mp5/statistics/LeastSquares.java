@@ -3,7 +3,7 @@ package ca.ece.ubc.cpen221.mp5.statistics;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 public class LeastSquares {
 	private List<Double> allStars;
 	private List<Double> allPrices;
-	private YelpDb database;
+	private final YelpDb database;
 	private double SxxAverage;
 	private double SyyAverage;
 
 	public LeastSquares(YelpDb database) {
-		this.allStars = new ArrayList<>();
-		this.allPrices = new ArrayList<>();
+		this.allStars = new LinkedList<>();
+		this.allPrices = new LinkedList<>();
 		this.database = database;
 	}
 
@@ -45,7 +45,7 @@ public class LeastSquares {
 		double r_squared = Math.pow(Sxy , 2) / (Syy * Sxx );
 		double a = SyyAverage - b * SxxAverage;
 
-		System.out.println("R^2: " + r_squared);
+		System.out.println(allPrices.toString() + allStars.toString());
 
 		// a + x * b where x is the price of the restuarant
 

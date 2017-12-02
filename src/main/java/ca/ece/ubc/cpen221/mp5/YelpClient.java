@@ -32,7 +32,7 @@ public class YelpClient {
      * @param command to find Fibonacci(x)
      * @throws IOException if network or server failure
      */
-    public void sendRequest(String command) throws IOException {
+    public void sendRequest(String command) {
         out.print(command + "\n");
         out.flush(); // important! make sure x actually gets sent
     }

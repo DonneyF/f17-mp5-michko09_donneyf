@@ -35,7 +35,6 @@ public class YelpUser implements User {
 		this.reviewCount = reviewCount;
 	}
 
-	@Override
 	public String getType() {
 		return type;
 	}
@@ -44,12 +43,10 @@ public class YelpUser implements User {
 		this.type = type;
 	}
 
-	@Override
 	public String getUserId() {
 		return userId;
 	}
 
-	@Override
 	public String getName() {
 		return name;
 	}
@@ -66,7 +63,6 @@ public class YelpUser implements User {
 		this.averageStars = averageStars;
 	}
 
-	@Override
 	public YelpVotes getVotes() {
 		return votes;
 	}
@@ -118,6 +114,6 @@ public class YelpUser implements User {
 
 	@Override
 	public String toString(){
-		return getUserId();
+		return getName();
 	}
 }

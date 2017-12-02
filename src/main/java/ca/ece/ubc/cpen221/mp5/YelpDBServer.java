@@ -30,9 +30,6 @@ import java.util.stream.Collectors;
  */
 public class YelpDBServer {
 
-    // Default port used for local servers
-    public static final int YELP_PORT = 4949;
-
     private ServerSocket serverSocket;
 
     // All valid commands for this server

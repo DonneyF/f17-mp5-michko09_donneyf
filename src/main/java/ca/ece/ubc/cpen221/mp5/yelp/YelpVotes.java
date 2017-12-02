@@ -43,9 +43,8 @@ public class YelpVotes implements Votes {
         try {
             return objectMapper.writeValueAsString(this);
         } catch (Exception e){
-            e.printStackTrace();
+            return null;
         }
-        return null;
     }
 
     @Override

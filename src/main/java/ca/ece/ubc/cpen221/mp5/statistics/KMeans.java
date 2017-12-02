@@ -11,16 +11,16 @@ import java.util.*;
 public class KMeans {
 	private static final double MAX_VALUE = 9999999;
 
-	private Map<Point2D, Set<YelpRestaurant>> currentClusters;
+	private final Map<Point2D, Set<YelpRestaurant>> currentClusters;
 	// private List<Set<String>> clusters;
-	private List<YelpRestaurant> allYelpRestaurants;
-	private List<Point2D> updatedCentroids;
+	private final List<YelpRestaurant> allYelpRestaurants;
+	private final List<Point2D> updatedCentroids;
 	// List<Point2D> centroids;
-	private Map<YelpRestaurant, Point2D> allPoints;
-	private int numberOfClusters;
+	private final Map<YelpRestaurant, Point2D> allPoints;
+	private final int numberOfClusters;
 
 	//private HashMap<Point2D, Set<YelpRestaurant>> lastCluster;
-	private List<Double> lastClusterPoints;
+	private final List<Double> lastClusterPoints;
 
 	/**
 	 * Create a Constructor for KMeans
@@ -31,12 +31,9 @@ public class KMeans {
 	public KMeans(List<YelpRestaurant> placeHolder, int k) {
 		this.numberOfClusters = k;
 		this.currentClusters = new HashMap<>();
-		//this.lastCluster = new HashMap<>();
 		this.lastClusterPoints = new ArrayList<>();
 		this.updatedCentroids = new ArrayList<>();
 		this.allYelpRestaurants = placeHolder;
-		// this.centroids = new ArrayList<Point2D>();
-		// this.clusters = new ArrayList<Set<String>>();
 		this.allPoints = getAllPoints();
 		if(k != placeHolder.size()){
 			findClusters();
@@ -56,7 +53,7 @@ public class KMeans {
 		// Set up the condition for the while loop
 
 		// Loop until there are no more changes in the KMeans structure
-		while (!(getNewCentroids())) {
+		while (getNewCentroids()) {
 			findNewClusters();
 		}
 
@@ -69,7 +66,6 @@ public class KMeans {
 
 		// We simply use the first number of YelpRestaurants in our list for starting
 		for (int i = 0; currentClusters.keySet().size() < numberOfClusters; i++) {
-			// centroids.add(allPoints.get(count));
 			Point2D initialCentroid = allPoints.get(allYelpRestaurants.get(i));
 			if (!currentClusters.containsKey(initialCentroid)) {
 				currentClusters.put(initialCentroid, new HashSet<>());
@@ -136,12 +132,6 @@ public class KMeans {
 			Point2D newCentroidPoint = new Point2D.Double(newX / totalYelpRestaurants, newY / totalYelpRestaurants);
 			newCentroids.add(newCentroidPoint);
 
-			// Make a last Map reference
-			// Point2D pointCopy = new Point2D.Double(centroids.getX(), centroids.getY());
-			// Set<YelpRestaurant> listCopy = new HashSet<YelpRestaurant>();
-			// listCopy.addAll(currentClusters.get(centroids));
-			// lastCluster.put(pointCopy, listCopy);
-
 		}
 
 		updatedCentroids.clear();
@@ -167,8 +157,6 @@ public class KMeans {
 		currentClusters.clear();
 		// Reinitialize the currentClusters Map
 		for (Point2D centroid : updatedCentroids) {
-			// System.out.println(centroid.getX());
-			// System.out.println(centroid.getY());
 			currentClusters.put(centroid, new HashSet<>());
 		}
 
@@ -189,15 +177,9 @@ public class KMeans {
 
 			if (closestCentroid != null) {
 				currentClusters.get(closestCentroid).add(place);
-				// noChange = false;
 			}
 
 		}
-
-		// System.out.println(currentClusters.values());
-
-		// if (!(currentClusters.values().equals(lastCluster.values()))) {
-		// return false;
 	}
 
 	// return noChange;
@@ -209,11 +191,8 @@ public class KMeans {
 		return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 	}
 
-	public void parseResultsToJson() {
+	public List<Map<String, Object>> toList(){
 		List<Map<String, Object>> results = new ArrayList<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-
-		//private Map<Point2D, Set<YelpRestaurant>> currentClusters;
 
 		int cluster = 0;
 		if (numberOfClusters != allYelpRestaurants.size()) {
@@ -225,6 +204,7 @@ public class KMeans {
 					entry.put("name", restaurant.getName());
 					entry.put("cluster", cluster);
 					entry.put("weight", 1.0);
+					entry.put("centroid", point);
 					results.add(entry);
 				}
 				cluster++;
@@ -237,15 +217,36 @@ public class KMeans {
 				entry.put("name", allYelpRestaurants.get(i).getName());
 				entry.put("cluster", i);
 				entry.put("weight", 1.0);
+				entry.put("centroid", new Point2D.Double((Double)entry.get("x"), (Double)entry.get("y")));
 				results.add(entry);
 			}
 		}
+		return results;
+	}
+
+	public void toJson() {
+		List<Map<String, Object>> results = toList();
+		for(Map map : results){
+			map.remove("centroid");
+		}
+		ObjectMapper objectMapper = new ObjectMapper();
 
 		try {
 			objectMapper.writeValue(new File("data/results.json"), results);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public List<Point2D> getCentroids(){
+		List<Point2D> centroids = new ArrayList<>();
+		if(numberOfClusters == allYelpRestaurants.size()){
+			for (YelpRestaurant restaurant : allYelpRestaurants)
+			centroids.add(new Point2D.Double(restaurant.getLongitude(), restaurant.getLatitude()));
+		} else {
+			centroids.addAll(currentClusters.keySet());
+		}
+		return centroids;
 	}
 
 }

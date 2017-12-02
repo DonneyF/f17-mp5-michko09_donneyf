@@ -59,10 +59,6 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         return reviews.toString() + restaurants.toString() + users.toString();
     }
 
-    public int size(){
-        return reviews.size() + restaurants.size() + users.size();
-    }
-
     public List<YelpRestaurant> getRestaurants() {
         return new LinkedList<>(restaurants.values());
     }
@@ -105,21 +101,10 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         }
     }
 
-    public void addReview(String reviewJson){
-        try {
-            YelpReview review = new ObjectMapper().readValue(reviewJson, YelpReview.class);
-            reviews.put(review.getReviewId(), review);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public Set getMatches(String queryString) {
         return null;
     }
 
-    @Override
     public String kMeansClusters_json(int k) {
         return null;
     }

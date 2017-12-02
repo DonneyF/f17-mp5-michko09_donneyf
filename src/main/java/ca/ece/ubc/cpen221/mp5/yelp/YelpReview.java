@@ -1,7 +1,6 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
 import ca.ece.ubc.cpen221.mp5.interfaces.Review;
-import ca.ece.ubc.cpen221.mp5.interfaces.User;
 import ca.ece.ubc.cpen221.mp5.yelp.deserlializers.YelpReviewDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
@@ -21,7 +20,6 @@ public class YelpReview implements Review {
 		this.reviewId = reviewId;
 	}
 
-	@Override
 	public String getType() {
 		return type;
 	}
@@ -30,7 +28,6 @@ public class YelpReview implements Review {
 		this.type = type;
 	}
 
-	@Override
 	public String getBusinessId() {
 		return businessId;
 	}
@@ -52,7 +49,6 @@ public class YelpReview implements Review {
 		return reviewId;
 	}
 
-	@Override
 	public String getText() {
 		return text;
 	}
@@ -69,7 +65,6 @@ public class YelpReview implements Review {
 		this.stars = stars;
 	}
 
-	@Override
 	public String getUserId() {
 		return userId;
 	}
@@ -78,7 +73,6 @@ public class YelpReview implements Review {
 		this.userId = userId;
 	}
 
-	@Override
 	public String getDate() {
 		return date;
 	}
@@ -109,7 +103,7 @@ public class YelpReview implements Review {
 	@Override
 	public boolean equals(Object other) {
 
-		if (other instanceof User) {
+		if (other instanceof Review) {
 			Review otherDoc = (Review) other;
 			return (this.getReviewId().equals(otherDoc.getReviewId()));
 		} else {
@@ -129,6 +123,6 @@ public class YelpReview implements Review {
 
 	@Override
 	public String toString(){
-		return getReviewId();
+		return getText();
 	}
 }
