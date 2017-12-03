@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -32,6 +33,8 @@ public class KMeansTest {
         List<Map<String, Object>> result = kMeans.toList();
 
         List<Point2D> centroids = kMeans.getCentroids();
+
+        List<Set<YelpRestaurant>> listOfSets = kMeans.getListofSets();
 
         for(Map<String, Object> restaurant : result){
             Point2D restaurantLocation = new Point2D.Double((Double)restaurant.get("x"), (Double)restaurant.get("y"));

@@ -1,5 +1,6 @@
 package ca.ece.ubc.cpen221.mp5.statistics;
 
+import ca.ece.ubc.cpen221.mp5.interfaces.Restaurant;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.awt.geom.Point2D;
@@ -315,6 +316,21 @@ public class KMeans {
 			centroids.addAll(currentClusters.keySet());
 		}
 		return centroids;
+	}
+
+	/**
+	 * Returns a list of all sets o clustered restaurants (as requested in the MP Document).
+	 *
+	 * @return a List<Set<YelpRestaurant>>, which:
+	 * 		- is a list containing sets of restaurants, each set representing a unique cluster.
+	 */
+	public List<Set<YelpRestaurant>> getListofSets() {
+		List<Set<YelpRestaurant>> toReturn = new ArrayList<Set<YelpRestaurant>>();
+		for (Set<YelpRestaurant> cluster : currentClusters.values()) {
+			toReturn.add(cluster);
+		}
+
+		return toReturn;
 	}
 
 }
