@@ -6,11 +6,11 @@ import java.util.List;
 
 public class QueryCreator extends QueryBaseListener {
 
-    List<HashMap<String, String>> masterList;
-    int numOrPaths;
-    int repeatingFactor;
-    int indexingFactor;
-    int counter;
+    private List<HashMap<String, String>> masterList;
+    private int numOrPaths;
+    private int repeatingFactor;
+    private int indexingFactor;
+    private int counter;
 
     /**
      * Creates a QueryCreator Constructor, which will be used to construct a List of Maps which are
@@ -49,7 +49,7 @@ public class QueryCreator extends QueryBaseListener {
             repeatingFactor = masterList.size() * numOrPaths;
             indexingFactor = repeatingFactor;
             // Copy each map and account for new number of paths created by the OR Statement
-            List<HashMap<String, String>> copy = new ArrayList<HashMap<String, String>>();
+            List<HashMap<String, String>> copy = new ArrayList<>();
             int count = 0;
             while (count < numOrPaths - 1) {
                 for (HashMap<String, String> path : masterList) {

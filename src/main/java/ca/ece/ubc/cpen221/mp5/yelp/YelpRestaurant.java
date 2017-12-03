@@ -28,7 +28,7 @@ public class YelpRestaurant implements Restaurant {
     private String name;
     private List<String> categories;
     private String state;
-    private String type;
+    private final String type;
     private double stars;
     private String city;
     private String address;

@@ -128,10 +128,5 @@ public class QueryTestCases {
         System.out.println(listener.getMasterList());
     }
 
-    @Test
-    public void test8() {
-
-    }
-
 }
 

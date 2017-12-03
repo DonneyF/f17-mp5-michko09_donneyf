@@ -93,6 +93,8 @@ public class LeastSquares {
 			 */
 			@Override
 			public double applyAsDouble(YelpDb database, String restaurantId) {
+				double projected = a + database.getRestaurant(restaurantId).getPrice() * b;
+				if (projected > 5 || projected < 1) throw new IllegalStateException("Projected rating is greater than 5 or less than 1");
 				return a + database.getRestaurant(restaurantId).getPrice() * b;
 			}
 

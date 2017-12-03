@@ -16,7 +16,7 @@ public class YelpUser implements User {
 
 	private String url;
 	private int reviewCount;
-	private String type;
+	private final String type;
 	private final String userId;
 	private String name;
 	private Double averageStars;
