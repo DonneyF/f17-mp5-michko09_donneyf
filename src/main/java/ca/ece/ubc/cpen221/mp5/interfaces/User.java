@@ -1,7 +1,9 @@
 package ca.ece.ubc.cpen221.mp5.interfaces;
 
-// WRITE SPECS LATER
 
+/**
+ * A User
+ */
 public interface User {
 
 	
@@ -11,7 +13,7 @@ public interface User {
 	 * @return a String, which: - is not null. - is the website URL for the specific
 	 *         user.
 	 */
-	String getWebsite();
+	String getUrl();
 	
 	/**
 	 * Obtains the type of the data strcuture.

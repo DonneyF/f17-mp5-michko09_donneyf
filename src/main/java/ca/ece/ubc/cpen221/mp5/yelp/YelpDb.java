@@ -14,6 +14,16 @@ import java.util.*;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
 
+/**
+ * A Yelp database that stores information of restaurants, its reviews, and the users visiting these restaurants
+ *
+ * Representation Invariant:
+ *      - users, restaurant, reviews, is not null
+ *      - Each value in users, reviews, and restaurants contains its key in its unique ID
+ *
+ * Abstraction Function:
+ *      - AF(this) -> a collection of YelpRestaurants, YelpReviews, and YelpUsers such that all objects are unique
+ */
 public class YelpDb extends MP5Database<YelpRestaurant> {
 
     // Each map contains a the unique ID of the element and corresponding object
@@ -43,6 +53,13 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         }
     }
 
+    /**
+     * Constructs a YelpDb object
+     *
+     * @param restaurantFileName is not null
+     * @param reviewsFileName is not null
+     * @param usersFileName is not null
+     */
     public YelpDb(String restaurantFileName, String reviewsFileName, String usersFileName) {
         users = parseJSON(usersFileName, YelpUser.class);
         restaurants = parseJSON(restaurantFileName, YelpRestaurant.class);
@@ -55,6 +72,14 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
 
     }
 
+    /**
+     * Parses a file and returns a map of objects parsed by JSON
+     *
+     * @param filePath is not null and contains information of either a set of YelpRestaurants, YelpReviews, or YelpUsers
+     * @param tclass the class of either YelpRestaurants, YelpReviews, or YelpUsers
+     * @return A map of Strings to Objects where the String is the unique identifier of YelpRestaurants, YelpReviews, or YelpUsers,
+     *          and Objects contain YelpRestaurants, YelpReviews, or YelpUsers, respectively
+     */
     private Map parseJSON(String filePath, Class<?> tclass) {
         Map<String, Object> elements = new HashMap<>();
         try {
@@ -84,35 +109,79 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         }
     }
 
+    /**
+     * Gets the string representation of this database
+     *
+     * @return the string representation of the set of YelpRestaurants, YelpReviews, and YelpUsers
+     */
     @Override
     public String toString(){
-        return reviews.toString() + restaurants.toString() + users.toString();
+        return restaurants.toString() + reviews.toString() + users.toString();
     }
 
+    /**
+     * Gets the YelpRestaurants stored in this database
+     *
+     * @return a List of YelpRestaurants
+     */
     public List<YelpRestaurant> getRestaurants() {
         return new LinkedList<>(restaurants.values());
     }
-    
+
+    /**
+     * Gets the YelpReviews stored in this database
+     *
+     * @return a List of YelpReviews
+     */
     public List<YelpReview> getReviews() {
         return new LinkedList<>(reviews.values());
     }
-    
+
+    /**
+     * Gets the YelpUsers stored in this database
+     *
+     * @return a List of YelpUsers
+     */
     public List<YelpUser> getUsers() {
         return new LinkedList<>(users.values());
     }
 
-    public YelpUser getUserData(String userId){
+    /**
+     * Gets a user from this database
+     *
+     * @param userId represents a user stored in this database
+     * @return a YelpUser that contains userId
+     */
+    public YelpUser getUser(String userId){
         return users.get(userId);
     }
 
-    public YelpRestaurant getRestaurantData(String restaurantId){
+    /**
+     * Gets a restaurant from this database
+     *
+     * @param restaurantId represents a restaurant stored in this database
+     * @return a YelpRestaurant that contains restaurantId
+     */
+    public YelpRestaurant getRestaurant(String restaurantId){
         return restaurants.get(restaurantId);
     }
 
-    public YelpReview getReviewData(String reviewId){
+    /**
+     * Gets a review from this database
+     *
+     * @param reviewId represents a review stored in this database
+     * @return a YelpReview that contains reviewId
+     */
+    public YelpReview getReview(String reviewId){
         return reviews.get(reviewId);
     }
 
+    /**
+     * Add a user to this database
+     *
+     * @param userJson is a String of JSON containing user data. userJson must contain an entry for "name".
+     * @return the YelpUser created by this method with fields defaulted.
+     */
     public YelpUser addUser(String userJson){
         ObjectNode user = genericUser.deepCopy();
 
@@ -137,6 +206,12 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         }
     }
 
+    /**
+     * Add a restaurant to this database
+     *
+     * @param restaurantJson is a String of JSON containing restaurant data. userJson must contain an entry for "name".
+     * @return the YelpRestaurant created by this method with fields defaulted.
+     */
     public YelpRestaurant addRestaurant(String restaurantJson){
         ObjectNode restaurant = genericRestaurant.deepCopy();
 
@@ -161,6 +236,12 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         }
     }
 
+    /**
+     * Add a review to this database
+     *
+     * @param reviewJson is a String of JSON containing review data. userJson must contain an entry for "text".
+     * @return the YelpReview created by this method with fields defaulted.
+     */
     public YelpReview addReview(String reviewJson){
         ObjectNode review = genericReview.deepCopy();
 
@@ -185,19 +266,46 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         }
     }
 
+    /**
+     * Perform a structured query and return the set of objects that matches the
+     * query
+     *
+     * @param queryString is not null
+     * @return the set of objects that matches the query
+     */
     public Set getMatches(String queryString) {
         return null;
     }
 
+    /**
+     * Cluster objects into k clusters using k-means clustering
+     *
+     * @param k
+     *            number of clusters to create (0 < k <= number of objects)
+     * @return a String, in JSON format, that represents the clusters
+     */
     public String kMeansClusters_json(int k) {
        return new KMeans(getRestaurants(), k).toJson();
     }
 
+    /**
+     * @param user
+     *            represents a user_id in the database
+     * @return a function that predicts the user's ratings for objects (of type
+     *         T) in the database of type MP5Db<T>. The function that is
+     *         returned takes two arguments: one is the database and other other
+     *         is a String that represents the id of an object of type T.
+     */
     public ToDoubleBiFunction<YelpDb, String> getPredictorFunction(String user) {
         LeastSquares leastSquares = new LeastSquares(this);
         return leastSquares.getPredictorFunction(user);
     }
 
+    /**
+     * Generates a random ID
+     *
+     * @return a String containing alphanumeric characters of length 23.
+     */
     private String generateRandomID() {
         String potentialID;
         do {

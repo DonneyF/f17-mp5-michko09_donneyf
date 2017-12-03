@@ -1,5 +1,8 @@
 package ca.ece.ubc.cpen221.mp5.interfaces;
 
+/**
+ * A business interface. Supports getting information about this business.
+ */
 public interface Business {
 
 	/**
@@ -13,9 +16,6 @@ public interface Business {
 	
 	/**
 	 * Modifies the current business status.
-	 * 
-	 * @return true, if: - the restaurant status at the current time is open. false,
-	 *         if: - the restaurant is closed.
 	 */
 	void setOpen (boolean status);
 

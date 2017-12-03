@@ -10,10 +10,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 
+/**
+ * Jackson deserializer for a YelpReview
+ */
 public class YelpReviewDeserializer extends JsonDeserializer<YelpReview> {
 
+    // String constants for JSON fields
     private static final String USER_ID = "user_id";
-    private static final String TYPE = "type";
     private static final String BUSINESS_ID = "business_id";
     private static final String VOTES = "votes";
     private static final String REVIEW_ID = "review_id";
@@ -21,6 +24,13 @@ public class YelpReviewDeserializer extends JsonDeserializer<YelpReview> {
     private static final String STARS = "stars";
     private static final String DATE = "date";
 
+    /**
+     * Deserialize JSON to YelpReview object
+     * @param jp is not null. Contains fields specific to YelpReview
+     * @param ctxt is not null
+     * @return a YelpReview object initialized with the fields inside jp
+     * @throws IOException if JsonParser is not in the correct format
+     */
     public YelpReview deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
@@ -30,7 +40,6 @@ public class YelpReviewDeserializer extends JsonDeserializer<YelpReview> {
         if(node.has(DATE)) review.setDate(node.get(DATE).asText());
         if(node.has(STARS)) review.setStars(node.get(STARS).asInt());
         if(node.has(USER_ID)) review.setUserId(node.get(USER_ID).asText());
-        if(node.has(TYPE)) review.setType(node.get(TYPE).asText());
         if(node.has(TEXT)) review.setText(node.get(TEXT).asText());
 
         ObjectMapper mapper = new ObjectMapper();

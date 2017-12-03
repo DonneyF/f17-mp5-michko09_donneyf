@@ -11,8 +11,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * JSON Deserializer for YelpRestaurant using Jackson
+ */
 public class YelpRestaurantDeserializer extends JsonDeserializer<YelpRestaurant> {
 
+    // String constants for JSON fields
     private static final String BUSINESS_ID = "business_id";
     private static final String STARS = "stars";
     private static final String URL = "url";
@@ -29,8 +33,14 @@ public class YelpRestaurantDeserializer extends JsonDeserializer<YelpRestaurant>
     private static final String SCHOOLS = "schools";
     private static final String PRICE = "price";
     private static final String STATE = "state";
-    private static final String TYPE = "type";
 
+    /**
+     * Deserialize JSON to YelpRestaurant object
+     * @param jp is not null. Contains fields specific to YelpRestaurant
+     * @param ctxt is not null
+     * @return a YelpRestaurant object initialized with the fields inside jp
+     * @throws IOException if JsonParser is not in the correct format
+     */
     public YelpRestaurant deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
@@ -47,7 +57,6 @@ public class YelpRestaurantDeserializer extends JsonDeserializer<YelpRestaurant>
         if(node.has(ADDRESS)) restaurant.setAddress(node.get(ADDRESS).asText());
         if(node.has(PRICE)) restaurant.setPrice(node.get(PRICE).asInt());
         if(node.has(STATE)) restaurant.setState(node.get(STATE).asText());
-        if(node.has(TYPE)) restaurant.setType(node.get(TYPE).asText());
 
         ObjectMapper mapper = new ObjectMapper();
         // Use to String to allow ObjectMapper to create lists

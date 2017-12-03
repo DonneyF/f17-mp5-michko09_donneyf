@@ -2,6 +2,7 @@ package ca.ece.ubc.cpen221.mp5;
 
 import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
+import ca.ece.ubc.cpen221.mp5.yelp.YelpVotes;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -21,6 +22,7 @@ public class OtherTest {
     public void test2(){
 
         try {
+            // ObjectMapper test
             File file = new File("data/restaurants.json");
 
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -38,6 +40,7 @@ public class OtherTest {
 
     @Test
     public void test4(){
+        // Testing entire string parse test with default JSON
         String defaultRestaurant = "{\"open\": true, \"url\": \"http://www.yelp.com/\", \"neighborhoods\": [], " +
                 "\"business_id\": \"gclB3ED6uk6viWlolSb_uA\", \"name\": \"Cafe 3\", \"categories\": [], \"type\": " +
                 "\"business\", \"review_count\": 0, \"schools\": []}";
@@ -63,12 +66,25 @@ public class OtherTest {
 
     @Test
     public void test5(){
+        // ID generator
         YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
 
         String id = UUID.randomUUID().toString().replaceAll("[\\-]","").substring(0, 22);
 
-        assertTrue(db.getRestaurantData(id) == null);
-        assertTrue(db.getUserData(id) == null);
-        assertTrue(db.getReviewData(id) == null);
+        assertTrue(db.getRestaurant(id) == null);
+        assertTrue(db.getUser(id) == null);
+        assertTrue(db.getReview(id) == null);
+    }
+
+    @Test
+    public void test6(){
+        YelpVotes yelpVotes1 = new YelpVotes();
+        YelpVotes yelpVotes2 = new YelpVotes();
+
+        yelpVotes1.setCool(5);
+        yelpVotes2.setCool(3);
+
+        assertFalse(yelpVotes1.equals(yelpVotes2));
+        assertFalse(yelpVotes1.hashCode() == yelpVotes2.hashCode());
     }
 }

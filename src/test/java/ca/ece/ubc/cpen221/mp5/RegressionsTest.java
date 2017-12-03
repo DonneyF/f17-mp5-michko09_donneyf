@@ -5,12 +5,13 @@ import org.junit.Test;
 
 import java.util.function.ToDoubleBiFunction;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RegressionsTest {
 
     @Test
-    public void test() {
+    public void test1() {
         YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
 
         // eKWi4sFfjnrx-r9KUuhVqA" is John B.
@@ -24,7 +25,20 @@ public class RegressionsTest {
         double projected = function.applyAsDouble(db, "8PE1KtG_ZMxcgqCseHhmLA");
 
         // Check range
+        System.out.println(projected);
         assertTrue((projected >= 1.0) && (projected<= 5.0));
         assertTrue(projected > ratingAverage);
+    }
+
+    @Test
+    public void test2() {
+        YelpDb db = new YelpDb("data/restaurants.json", "data/reviews.json", "data/users.json");
+
+        ToDoubleBiFunction<YelpDb, String> function = db.getPredictorFunction("xVocUszkZtAqCxgWak3xVQ");
+
+        double projected = function.applyAsDouble(db, "gclB3ED6uk6viWlolSb_uA");
+
+        // Expected 1.6 from hand calculations
+        assertEquals(projected, 1.6, 0.1);
     }
 }

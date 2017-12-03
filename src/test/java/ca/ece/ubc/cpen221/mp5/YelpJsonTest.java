@@ -29,7 +29,7 @@ public class YelpJsonTest {
             votes.setFunny(35);
             votes.setCool(14);
 
-            assertEquals("http://www.yelp.com/user_details?userid=_NH7Cpq3qZkByP5xR4gXog",user.getWebsite());
+            assertEquals("http://www.yelp.com/user_details?userid=_NH7Cpq3qZkByP5xR4gXog",user.getUrl());
             assertEquals(votes, user.getVotes());
             assertEquals(29, user.getReviewCount());
             assertEquals("user", user.getType());

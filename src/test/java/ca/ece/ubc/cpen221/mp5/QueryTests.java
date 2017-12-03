@@ -3,6 +3,8 @@ package ca.ece.ubc.cpen221.mp5;
 import ca.ece.ubc.cpen221.mp5.query.QueryCreator;
 import ca.ece.ubc.cpen221.mp5.query.QueryLexer;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,7 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
 
-public class QueryTestCases {
+public class QueryTests {
 
     @Test
     public void test1() {
@@ -26,7 +28,13 @@ public class QueryTestCases {
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
 
-        System.out.println(listener.getMasterList());
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            System.out.println(mapper.writeValueAsString(listener.getMasterList()));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -98,7 +106,7 @@ public class QueryTestCases {
 
     @Test
     public void test6() {
-        CharStream stream = new ANTLRInputStream("category(Chinese) || price = 5 || rating = 5");
+        CharStream stream = new ANTLRInputStream("category(Chinese & Italian) || price = 5 || rating = 5");
         QueryLexer lexer = new QueryLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         QueryParser parser = new QueryParser(tokens);
@@ -112,21 +120,6 @@ public class QueryTestCases {
         System.out.println(listener.getMasterList());
     }
 
-    @Test
-    public void test7() {
-        CharStream stream = new ANTLRInputStream("category(Chinese) && price = 5 && rating = 5");
-        QueryLexer lexer = new QueryLexer(stream);
-        TokenStream tokens = new CommonTokenStream(lexer);
-        QueryParser parser = new QueryParser(tokens);
-
-        ParseTree tree = parser.orExpr();
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        QueryCreator listener = new QueryCreator();
-        walker.walk(listener, tree);
-
-        System.out.println(listener.getMasterList());
-    }
 
 }
 

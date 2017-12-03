@@ -35,9 +35,9 @@ public class YelpDbTest {
         assertTrue(restaurants.contains(newRestaurant));
         assertTrue(reviews.contains(newReview));
 
-        assertEquals(db.getUserData(newUser.getUserId()).getName(), "Sathish G.");
-        assertEquals(db.getRestaurantData(newRestaurant.getBusinessId()).getName(), "Sathish G.");
-        assertEquals(db.getReviewData(newReview.getReviewId()).getText(), "Sathish G.");
+        assertEquals(db.getUser(newUser.getUserId()).getName(), "Sathish G.");
+        assertEquals(db.getRestaurant(newRestaurant.getBusinessId()).getName(), "Sathish G.");
+        assertEquals(db.getReview(newReview.getReviewId()).getText(), "Sathish G.");
     }
 
     @Test(expected = IllegalArgumentException.class)

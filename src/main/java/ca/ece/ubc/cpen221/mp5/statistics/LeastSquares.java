@@ -63,11 +63,11 @@ public class LeastSquares {
 	 */
 	public ToDoubleBiFunction getPredictorFunction(String user) {
 		// Edge case where there is not sufficient data to undergo a linear regression analysis on the user.
-		if(database.getUserData(user).getReviewCount() <= 1) throw new IllegalArgumentException("User has one rating or less");
+		if(database.getUser(user).getReviewCount() <= 1) throw new IllegalArgumentException("User has one rating or less");
 
 		// We then stream through the database to find the prices of each restaurant the user has reviewed
 		allPrices = database.getReviews().parallelStream().filter(review -> review.getUserId().equals(user)).
-				map(YelpReview::getBusinessId).map(businessID -> database.getRestaurantData(businessID).
+				map(YelpReview::getBusinessId).map(businessID -> database.getRestaurant(businessID).
 				getPrice()).map(price -> (double) price).collect(Collectors.toList());
 
 		// We stream the database to find the corresponding stars the user has given to the restaurants
@@ -82,8 +82,6 @@ public class LeastSquares {
 		double r_squared = Math.pow(Sxy , 2) / (Syy * Sxx );
 		double a = SyyAverage - b * SxxAverage;
 
-		System.out.println(allPrices.toString() + allStars.toString());
-
 		// a + x * b where x is the price of the restuarant
 
 		return new ToDoubleBiFunction<YelpDb, String>() {
@@ -95,7 +93,9 @@ public class LeastSquares {
 			 */
 			@Override
 			public double applyAsDouble(YelpDb database, String restaurantId) {
-				return a + database.getRestaurantData(restaurantId).getPrice() * b;
+				double projected = a + database.getRestaurant(restaurantId).getPrice() * b;
+				if (projected > 5 || projected < 1) throw new IllegalStateException("Projected rating is greater than 5 or less than 1");
+				return a + database.getRestaurant(restaurantId).getPrice() * b;
 			}
 
 		};
