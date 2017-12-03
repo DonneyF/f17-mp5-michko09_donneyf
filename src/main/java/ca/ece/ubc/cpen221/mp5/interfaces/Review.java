@@ -1,5 +1,9 @@
 package ca.ece.ubc.cpen221.mp5.interfaces;
 
+/**
+ * This interface represents a Review
+ * This supports only getter methods
+ */
 public interface Review {
 	
 	/**

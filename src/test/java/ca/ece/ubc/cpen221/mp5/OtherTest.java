@@ -67,8 +67,8 @@ public class OtherTest {
 
         String id = UUID.randomUUID().toString().replaceAll("[\\-]","").substring(0, 22);
 
-        assertTrue(db.getRestaurantData(id) == null);
-        assertTrue(db.getUserData(id) == null);
-        assertTrue(db.getReviewData(id) == null);
+        assertTrue(db.getRestaurant(id) == null);
+        assertTrue(db.getUser(id) == null);
+        assertTrue(db.getReview(id) == null);
     }
 }
