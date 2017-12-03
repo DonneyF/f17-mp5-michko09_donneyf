@@ -49,7 +49,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             genericRestaurant = (ObjectNode) mapper.readTree(defaultRestaurant);
             genericReview = (ObjectNode) mapper.readTree(defaultReview);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException("Invalid default string");
         }
     }
 
@@ -105,8 +105,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             }
             return elements;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new IllegalArgumentException("Invalid JSON String in file");
         }
     }
 
