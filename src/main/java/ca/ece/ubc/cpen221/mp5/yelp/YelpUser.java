@@ -2,7 +2,9 @@ package ca.ece.ubc.cpen221.mp5.yelp;
 
 import ca.ece.ubc.cpen221.mp5.interfaces.User;
 import ca.ece.ubc.cpen221.mp5.yelp.deserlializers.YelpUserDeserializer;
+import ca.ece.ubc.cpen221.mp5.yelp.serializers.YelpUserSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * A Yelp user object. Stores information of a user registered on Yelp
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * Abstraction Function: AF(this) -> A user such that url contains a parsed form of name.
  */
 @JsonDeserialize(using = YelpUserDeserializer.class)
+@JsonSerialize(using = YelpUserSerializer.class)
 public class YelpUser implements User {
 
 	private String url;
@@ -19,7 +22,7 @@ public class YelpUser implements User {
 	private final String type;
 	private final String userId;
 	private String name;
-	private Double averageStars;
+	private double averageStars;
 	private YelpVotes votes;
 
 	/**

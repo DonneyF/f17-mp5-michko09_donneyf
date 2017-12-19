@@ -2,7 +2,9 @@ package ca.ece.ubc.cpen221.mp5.yelp;
 
 import ca.ece.ubc.cpen221.mp5.interfaces.Review;
 import ca.ece.ubc.cpen221.mp5.yelp.deserlializers.YelpReviewDeserializer;
+import ca.ece.ubc.cpen221.mp5.yelp.serializers.YelpReviewSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * A Yelp review object. Stores information of a review created on Yelp
@@ -12,6 +14,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  * Abstraction Function: AF(this) -> A review such that text pertains to businessId.
  */
 @JsonDeserialize(using = YelpReviewDeserializer.class)
+@JsonSerialize(using = YelpReviewSerializer.class)
 public class YelpReview implements Review {
 
 	private final String type;

@@ -1,26 +1,35 @@
 package ca.ece.ubc.cpen221.mp5.yelp;
 
 import ca.ece.ubc.cpen221.mp5.interfaces.Votes;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A Yelp votes object. Stores information of the votes given on Yelp
- *
- * Representation Invariant: funny, useful, and cool > 0
- *
- * Abstraction Function: AF(this) -> A set of votes such that each vote category corresponds to the integer stored in this
- */
+*/
 public class YelpVotes implements Votes {
 
+    /**
+     * Representation Invariant: funny, useful, and cool > 0
+     *
+     * Abstraction Function: AF(this) -> A set of votes such that each vote category corresponds to the integer stored in this
+     */
     private int funny;
     private int useful;
     private int cool;
+
+    public YelpVotes(){
+        funny = 0;
+        useful = 0;
+        cool = 0;
+    }
 
     /**
      * Gets the total number of votes
      *
      * @return the total number of votes
      */
+    @JsonIgnore
     public int getTotalVotes(){
         return funny + useful + cool;
     }
