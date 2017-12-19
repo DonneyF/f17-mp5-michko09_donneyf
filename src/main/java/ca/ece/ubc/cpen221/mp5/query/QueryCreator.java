@@ -4,6 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * QueryCreator identifies the atomic elements of a query request and restructures the request into a form which
+ * will be easier to filter to database with. In the case of an OR statement, the class creates the same number
+ * of possible branches the OR statement creates.
+ *
+ * Representation Invariant:
+ * 		- There size of the list is equal to the number of distinct OR statements in the query request.
+ * 	    - There are only unique and distinct maps in the masterList.
+ * 	    - Each map within the list can only have a maximum of one unique category and its corresponding value of
+ * 	      the same type.
+ * 	    - Unless the user inputs an improper query request, masterList is never empty.
+ *
+ * Abstraction Function:
+ * 		- Takes in a string representing a query request and breaks it down into its unique and separate elements.
+ * 	    - Transforms the request into a list of maps, each map containing a possible solution of the query request.
+ */
 public class QueryCreator extends QueryBaseListener {
 
     private List<HashMap<String, String>> masterList;
@@ -65,34 +81,8 @@ public class QueryCreator extends QueryBaseListener {
         }
 
     }
-    public void exitOrExpr(QueryParser.OrExprContext ctx) {
-        //System.err.println("exiting orExpr");
-    }
-    public void enterAndExpr(QueryParser.AndExprContext ctx) {
-        //System.err.println("entering andExpr");
-        String contains = ctx.getText();
-        //System.err.println("this andExpr contains: " + contains);
-        //System.err.println(ctx.getChildCount());
-    }
-    public void exitAndExpr(QueryParser.AndExprContext ctx) {
-        //System.err.println("exiting andExpr");
-    }
-    public void enterAtom(QueryParser.AtomContext ctx) {
-        //System.err.println("entering atom");
-        String contains = ctx.getText();
-        //System.err.println("this atom contains: " + contains);
-    }
-    public void exitAtom(QueryParser.AtomContext ctx) {
-        //System.err.println("exiting atom");
-    }
-    public void enterIneq(QueryParser.IneqContext ctx) {
-        //System.err.println("entering ineq");
-        String token = ctx.getText();
-        //System.err.println("ineq is: " + token);
-    }
-    public void exitIneq(QueryParser.IneqContext ctx) {
-        //System.err.println("exiting ineq");
-    }
+
+    @Override
     public void enterIn(QueryParser.InContext ctx) {
         String neighborhood = ctx.STRING().getText();
 
@@ -113,9 +103,8 @@ public class QueryCreator extends QueryBaseListener {
             numOrPaths--;
         }
     }
-    public void exitIn(QueryParser.InContext ctx) {
-        //System.err.println("exiting in");
-    }
+
+    @Override
     public void enterCategory(QueryParser.CategoryContext ctx) {
         String category = ctx.STRING().getText();
 
@@ -136,9 +125,8 @@ public class QueryCreator extends QueryBaseListener {
             numOrPaths--;
         }
     }
-    public void exitCategory(QueryParser.CategoryContext ctx) {
-        //System.err.println("exiting category");
-    }
+
+    @Override
     public void enterName(QueryParser.NameContext ctx) {
         String name = ctx.STRING().getText();
 
@@ -159,9 +147,8 @@ public class QueryCreator extends QueryBaseListener {
             numOrPaths--;
         }
     }
-    public void exitName(QueryParser.NameContext ctx) {
-        //System.err.println("exiting name");
-    }
+
+    @Override
     public void enterRating(QueryParser.RatingContext ctx) {
         String ineq = ctx.ineq().getText();
         String rating = ctx.NUM().getText();
@@ -170,47 +157,99 @@ public class QueryCreator extends QueryBaseListener {
         // thus must be added to all paths as a requirement
         if (numOrPaths == 0) {
             for (HashMap paths : masterList) {
-                paths.put("stars", ineq + rating);
+                paths.put("stars", equalityCheck(ineq, rating));
             }
         } else {
             // If this is a result of an OR Statement, only need to add this to one branch
             int count = 0;
             while(count < repeatingFactor / counter) {
-                masterList.get(indexingFactor - 1).put("stars", ineq + rating);
+                masterList.get(indexingFactor - 1).put("stars", equalityCheck(ineq, rating));
                 indexingFactor--;
                 count++;
             }
             numOrPaths--;
         }
     }
-    public void exitRating(QueryParser.RatingContext ctx) {
-        //System.err.println("exiting rating");
-    }
+
+    @Override
     public void enterPrice(QueryParser.PriceContext ctx) {
-        //System.err.println("entering price");
         String ineq = ctx.ineq().getText();
         String price = ctx.NUM().getText();
-        //System.err.println("price is: " + ineq + " " + price);
 
         // If this is not a result of an OR Statement, it is a result of an AND Statement and
         // thus must be added to all paths as a requirement
         if (numOrPaths == 0) {
             for (HashMap paths : masterList) {
-                paths.put("price", ineq + price);
+                paths.put("price", equalityCheck(ineq, price));
             }
         } else {
             // If this is a result of an OR Statement, only need to add this to one branch
             int count = 0;
             while(count < repeatingFactor / counter) {
-                masterList.get(indexingFactor - 1).put("price", ineq + price);
+                masterList.get(indexingFactor - 1).put("price", equalityCheck(ineq, price));
                 indexingFactor--;
                 count++;
             }
             numOrPaths--;
         }
     }
-    public void exitPrice(QueryParser.PriceContext ctx) {
-        //System.err.println("exiting price");
+
+    /**
+     * Determines what kind of equals operation the current node represents.
+     *
+     * @param equality, which:
+     *      - is the string format of the equality sign.
+     *      - is not null;
+     *
+     * @param value, which:
+     *      - is the value which comes after the equality sign in string format.
+     *      - is not null.
+     *
+     * @return a string, which:
+     *      - is the evaluated version of the equality expression.
+     *      - Ex. if input is: <= 5, the output is: 54321.
+     */
+    private String equalityCheck(String equality, String value) {
+        String E = "=";
+        String GT = ">";
+        String GTE = ">=";
+        String LT = "<";
+        String LTE = "<=";
+        String result = null;
+        int count;
+        StringBuilder stringBuild = new StringBuilder();
+
+        if (equality.equals(GT)) {
+            count = Integer.parseInt(value) + 1;
+            while (count <= 5) {
+                stringBuild.append(count);
+                count++;
+            }
+        } else if (equality.equals(GTE)) {
+            count = Integer.parseInt(value);
+            while (count <= 5) {
+                stringBuild.append(count);
+                count++;
+            }
+        } else if (equality.equals(LT)) {
+            count = Integer.parseInt(value) - 1;
+            while (count >= 1) {
+                stringBuild.append(count);
+                count--;
+            }
+        } else if (equality.equals(LTE)) {
+            count = Integer.parseInt(value);
+            while (count >= 1) {
+                stringBuild.append(count);
+                count--;
+            }
+        } else {
+            count = Integer.parseInt(value);
+            stringBuild.append(count);
+        }
+
+        result = stringBuild.toString();
+        return result;
     }
 
     /**
