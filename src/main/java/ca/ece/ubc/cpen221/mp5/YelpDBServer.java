@@ -53,7 +53,7 @@ public class YelpDBServer {
     public YelpDBServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         database = new YelpDb(YelpRestaurantsData, reviewsData, usersData);
-        }
+    }
 
     /**
      * Runs the server as it listens for input connections and handles them.
@@ -161,19 +161,14 @@ public class YelpDBServer {
      * @param command
      */
     private String getYelpRestaurant(String command) {
-
         // Check if the input string is a valid command. Must contain at least one word.
-        String[] splitCommand = command.split(" ");
-
-        if (splitCommand.length == 1) {
-            return "ERR: INVALID_YelpRestaurant_STRING";
-        }
+        if (command.split(" ").length == 1) return "ERR: INVALID_YelpRestaurant_STRING";
 
         // Get the restaurant and parse the result to a string
         List<YelpRestaurant> allYelpRestaurants = database.getRestaurants();
-        System.out.println(allYelpRestaurants.size());
+
         for (YelpRestaurant unique : allYelpRestaurants) {
-            if (unique.getBusinessId().equals(splitCommand[1])) {
+            if (unique.getBusinessId().equals(command.split(" ")[1])) {
                 try {
                     ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
                     return mapper.writeValueAsString(unique);
@@ -187,17 +182,20 @@ public class YelpDBServer {
     }
 
     private String addYelpRestaurant(String command) {
+        // Check if command is of right format
+        if (command.split(" ").length == 1) return "ERR: INVALID_RESTAURANT_STRING";
 
-        if (command.split(" ").length == 1) {
-            return "ERR: INVALID_YelpRestaurant_STRING";
-        }
-        // Remove ADDRESTAURANT
+        // Remove ADDRESTAURANT and get the string to parse
+        String possibleJSONString = command.substring(addYelpRestaurant.length());
+        // Check required fields
+        if(!possibleJSONString.contains("latitude")) return "ERR: INVALID_RESTAURANT_STRING";
+        if(!possibleJSONString.contains("longitude")) return "ERR: INVALID_RESTAURANT_STRING";
         try {
-            String possibleJSONString = command.substring(addYelpRestaurant.length());
 
             YelpRestaurant yelpRestaurant = database.addRestaurant(possibleJSONString);
 
-            return "RESTAURANT_ADD_SUCCESS: " + yelpRestaurant.toString();
+            return "RESTAURANT_ADD_SUCCESS: " + new ObjectMapper().writeValueAsString(yelpRestaurant).replaceAll(System.lineSeparator(), "")
+                    .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_YelpRestaurant_STRING";
@@ -208,18 +206,20 @@ public class YelpDBServer {
     }
 
     private String addUser(String command) {
-        String[] splitCommand = command.split(" ");
+        // Check if command is of right format
+        if (command.split(" ").length == 1) return "ERR: INVALID_USER_STRING";
 
-        if (splitCommand.length == 1) {
-            return "ERR: INVALID_USER_STRING";
-        }
+        // Remove ADDUSER and get the JSON string to parse
+        String possibleJSONString = command.substring(addUser.length());
+
+        // Check required fields
+        if(!possibleJSONString.contains("name")) return "ERR: INVALID_USER_STRING";
 
         try {
-            String possibleJSONString = command.substring(addUser.length());
-
             YelpUser yelpUser = database.addUser(possibleJSONString);
 
-            return "USER_ADD_SUCCESS: " + yelpUser.toString();
+            return "USER_ADD_SUCCESS: " + new ObjectMapper().writeValueAsString(yelpUser).replaceAll(System.lineSeparator(), "")
+                    .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_YelpUser_STRING";
@@ -231,17 +231,23 @@ public class YelpDBServer {
     }
 
     private String addReview(String command) {
-        String[] splitCommand = command.split(" ");
+        // Check if legitimate command
+        if (command.split(" ").length == 1) return "ERR: INVALID_REVIEW_STRING";
 
-        if (splitCommand.length == 1) {
-            return "ERR: INVALID_REVIEW_STRING";
-        }
-        try {
+        // Remove ADDREVIEW and get JSON string to parse
         String possibleJSONString = command.substring(addReview.length());
 
+        // Check required fields
+        if (!possibleJSONString.contains("business_id")) return "ERR: INVALID_REVIEW_STRING";
+        if (!possibleJSONString.contains("text")) return "ERR: INVALID_REVIEW_STRING";
+        if (!possibleJSONString.contains("stars")) return "ERR: INVALID_REVIEW_STRING";
+        if (!possibleJSONString.contains("user_id")) return "ERR: INVALID_REVIEW_STRING";
+
+        try {
         YelpReview yelpReview = database.addReview(possibleJSONString);
 
-        return "REVIEW_ADD_SUCCESS:" + yelpReview.toString();
+        return "REVIEW_ADD_SUCCESS:" + new ObjectMapper().writeValueAsString(yelpReview).replaceAll(System.lineSeparator(), "")
+                .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_YelpRestaurant_STRING";

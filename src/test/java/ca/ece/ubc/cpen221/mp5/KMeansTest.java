@@ -80,8 +80,8 @@ public class KMeansTest {
         KMeans kMeans = new KMeans(new ArrayList<>(list), 40);
 
         // Get clusters, containing a list of Maps representing each restaurant.
-        kMeans.toFile("data/results.json");
         try {
+            kMeans.toFile("data/results.json");
             File file = new File("data/results.json");
 
             BufferedReader br = new BufferedReader(new FileReader(file));

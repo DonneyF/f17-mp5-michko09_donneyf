@@ -10,7 +10,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Collectors;
 
@@ -27,9 +31,9 @@ import java.util.stream.Collectors;
 public class YelpDb extends MP5Database<YelpRestaurant> {
 
     // Each map contains a the unique ID of the element and corresponding object
-    private final Map<String, YelpUser> users;
-    private final Map<String, YelpRestaurant> restaurants;
-    private final Map<String, YelpReview> reviews;
+    private final ConcurrentHashMap<String, YelpUser> users;
+    private final ConcurrentHashMap<String, YelpRestaurant> restaurants;
+    private final ConcurrentHashMap<String, YelpReview> reviews;
     private final List<String> IDs;
     private static ObjectNode genericUser;
     private static ObjectNode genericRestaurant;
@@ -37,9 +41,9 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
 
     // Default user JSON objects
     static {
-        String defaultUser = "{\"url\": \"http://www.yelp.com/\", \"votes\": {}, \"review_count\": 0, \"type\": \"user\", \"user_id\": \"42\", \"name\": \"John Doe\", \"average_stars\": 0}";
+        String defaultUser = "{\"url\": \"http://www.yelp.com/user_details?userid=\", \"votes\": {}, \"review_count\": 0, \"type\": \"user\", \"user_id\": \"42\", \"average_stars\": 0}";
 
-        String defaultRestaurant = "{\"open\": true, \"url\": \"http://www.yelp.com/\", \"neighborhoods\": [], \"business_id\": \"gclB3ED6uk6viWlolSb_uA\", \"name\": \"Cafe 3\", \"categories\": [], \"type\": \"business\", \"review_count\": 0, \"schools\": []}";
+        String defaultRestaurant = "{\"open\": true, \"url\": \"http://www.yelp.com/biz/\", \"type\": \"business\", \"review_count\": 0}";
 
         String defaultReview = "{\"type\": \"review\", \"votes\": {}, \"review_id\": \"0a-pCW4guXIlWNpVeBHChg\", \"text\": \"Some text\"}";
 
@@ -49,7 +53,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             genericRestaurant = (ObjectNode) mapper.readTree(defaultRestaurant);
             genericReview = (ObjectNode) mapper.readTree(defaultReview);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error: cannot resolve object.");
+            throw new IllegalArgumentException("Invalid default string");
         }
     }
 
@@ -80,8 +84,8 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @return A map of Strings to Objects where the String is the unique identifier of YelpRestaurants, YelpReviews, or YelpUsers,
      *          and Objects contain YelpRestaurants, YelpReviews, or YelpUsers, respectively
      */
-    private Map parseJSON(String filePath, Class<?> tclass) {
-        Map<String, Object> elements = new HashMap<>();
+    private ConcurrentHashMap parseJSON(String filePath, Class<?> tclass) {
+        ConcurrentHashMap<String, Object> elements = new ConcurrentHashMap<>();
         try {
             // Get the file name
             File file = new File(filePath);
@@ -105,7 +109,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             }
             return elements;
         } catch (Exception e) {
-            throw new IllegalArgumentException("Error: cannot resolve file path.");
+            throw new IllegalArgumentException("Invalid JSON String in file");
         }
     }
 
@@ -191,14 +195,17 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             ObjectNode input = (ObjectNode) mapper.readTree(userJson);
             // Get a random ID
             String id = generateRandomID();
-            // Parse user ID and url. Input must contain business name
+            // Parse user ID and url. Input must contain user's name
             if (!input.toString().contains("name")) throw new IllegalArgumentException();
+
             input.put("user_id", id);
+            input.put("url", user.get("url").asText() + id);
             user.setAll(input);
 
-            YelpUser yelpUser = new ObjectMapper().readValue(input.toString(), YelpUser.class);
-            users.put(id, yelpUser);
+            YelpUser yelpUser = new ObjectMapper().readValue(user.toString(), YelpUser.class);
+            yelpUser.setVotes(new YelpVotes());
 
+            users.put(id, yelpUser);
             return yelpUser;
 
         } catch (Exception e){
@@ -224,9 +231,13 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             // Parse user ID and url. Input must contain business name
             if (!input.toString().contains("name")) throw new IllegalArgumentException();
             input.put("business_id", id);
+            input.put("url", restaurant.get("url").asText() + input.get("name").asText().toLowerCase()
+                    .replaceAll("\\s", "-").replaceAll("[^a-z0-9-]", ""));
             restaurant.setAll(input);
 
-            YelpRestaurant yelpRestaurant = new ObjectMapper().readValue(input.toString(), YelpRestaurant.class);
+            System.out.println(restaurant);
+
+            YelpRestaurant yelpRestaurant = new ObjectMapper().readValue(restaurant.toString(), YelpRestaurant.class);
             restaurants.put(id, yelpRestaurant);
 
             return yelpRestaurant;

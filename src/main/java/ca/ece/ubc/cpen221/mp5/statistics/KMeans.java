@@ -265,18 +265,13 @@ public class KMeans {
 	 * 		- is not null;
 	 * 	    - is the location in which to store the newly generated file.
 	 */
-	public void toFile(String pathname) {
+	public void toFile(String pathname) throws IOException {
 		List<Map<String, Object>> results = toList();
 		for(Map map : results){
 			map.remove("centroid");
 		}
 		ObjectMapper objectMapper = new ObjectMapper();
-
-		try {
-			objectMapper.writeValue(new File(pathname), results);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		objectMapper.writeValue(new File(pathname), results);
 	}
 
 	/**

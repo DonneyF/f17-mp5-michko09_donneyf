@@ -3,7 +3,9 @@ package ca.ece.ubc.cpen221.mp5.yelp;
 import ca.ece.ubc.cpen221.mp5.interfaces.Business;
 import ca.ece.ubc.cpen221.mp5.interfaces.Restaurant;
 import ca.ece.ubc.cpen221.mp5.yelp.deserlializers.YelpRestaurantDeserializer;
+import ca.ece.ubc.cpen221.mp5.yelp.serializers.YelpRestaurantSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
  * Abstraction Function: AF(this) -> A Restaurant such that: neighborhood, longitude, latitude, address, city, and schools are abstractly located in state
  */
 @JsonDeserialize(using = YelpRestaurantDeserializer.class)
+@JsonSerialize(using = YelpRestaurantSerializer.class)
 public class YelpRestaurant implements Restaurant {
 
     // Non-JSON fields: businessId, reviewCount, photoUrl
