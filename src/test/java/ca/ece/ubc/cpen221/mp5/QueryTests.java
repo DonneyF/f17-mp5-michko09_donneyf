@@ -16,7 +16,7 @@ public class QueryTests {
 
     @Test
     public void test1() {
-        CharStream stream = new ANTLRInputStream("in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2");
+        CharStream stream = new ANTLRInputStream("in(The Sunny Side Caf\\u00e9) && (category(Chinese) || category(Italian)) && price <= 2");
         QueryLexer lexer = new QueryLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         QueryParser parser = new QueryParser(tokens);

@@ -1,5 +1,5 @@
-package ca.ece.ubc.cpen221.mp5.query;
 // Generated from Query.g4 by ANTLR 4.7
+package ca.ece.ubc.cpen221.mp5.query;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
