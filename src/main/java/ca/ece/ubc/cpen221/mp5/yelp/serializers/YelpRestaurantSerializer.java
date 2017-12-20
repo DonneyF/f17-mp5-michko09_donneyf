@@ -35,10 +35,10 @@ public class YelpRestaurantSerializer extends JsonSerializer<YelpRestaurant> {
         jgen.writeBooleanField(OPEN,restaurant.isOpen());
         jgen.writeStringField(URL,restaurant.getUrl());
         jgen.writeNumberField(LONGITUDE,restaurant.getLongitude());
-        jgen.writeObjectField(NEIGHBORHOODS,restaurant.getNeighborhoods());
+        if(restaurant.getNeighborhoods() != null) jgen.writeObjectField(NEIGHBORHOODS,restaurant.getNeighborhoods());
         jgen.writeStringField(BUSINESS_ID,restaurant.getBusinessId());
         jgen.writeStringField(NAME,restaurant.getName());
-        jgen.writeObjectField(CATEGORIES,restaurant.getCategories());
+        if (restaurant.getCategories() != null) jgen.writeObjectField(CATEGORIES,restaurant.getCategories());
         jgen.writeStringField(STATE,restaurant.getState());
         jgen.writeStringField(TYPE,restaurant.getType());
         jgen.writeNumberField(STARS,restaurant.getStars());
@@ -46,7 +46,7 @@ public class YelpRestaurantSerializer extends JsonSerializer<YelpRestaurant> {
         jgen.writeStringField(ADDRESS,restaurant.getAddress());
         jgen.writeNumberField(REVIEW_COUNT,restaurant.getReviewCount());
         jgen.writeStringField(PHOTO_URL,restaurant.getPhotoUrl());
-        jgen.writeStringField(SCHOOLS,restaurant.getSchools().toString());
+        if (restaurant.getSchools() != null) jgen.writeStringField(SCHOOLS,restaurant.getSchools().toString());
         jgen.writeNumberField(LATITUDE,restaurant.getLatitude());
         jgen.writeNumberField(PRICE,restaurant.getPrice());
         jgen.writeEndObject();

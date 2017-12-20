@@ -21,15 +21,17 @@ import java.util.stream.Collectors;
 /**
  * A Yelp database that stores information of restaurants, its reviews, and the users visiting these restaurants
  *
- * Representation Invariant:
- *      - users, restaurant, reviews, is not null
- *      - Each value in users, reviews, and restaurants contains its key in its unique ID
- *
- * Abstraction Function:
- *      - AF(this) -> a collection of YelpRestaurants, YelpReviews, and YelpUsers such that all objects are unique
  */
 public class YelpDb extends MP5Database<YelpRestaurant> {
 
+    /*
+     * Representation Invariant:
+     *      - users, restaurant, reviews, is not null
+     *      - Each value in users, reviews, and restaurants contains its key in its unique ID
+     *
+     * Abstraction Function:
+     *      - AF(this) -> a collection of YelpRestaurants, YelpReviews, and YelpUsers such that all objects are unique
+     */
     // Each map contains a the unique ID of the element and corresponding object
     private final ConcurrentHashMap<String, YelpUser> users;
     private final ConcurrentHashMap<String, YelpRestaurant> restaurants;
@@ -261,6 +263,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             // Get a random ID
             String id = generateRandomID();
             // Parse user ID and url. Input must contain business name
+
             if (!input.toString().contains("text")) throw new IllegalArgumentException();
             input.put("review_id", id);
             review.setAll(input);
@@ -276,11 +279,10 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
     }
 
     /**
-     * Perform a structured query and return the set of objects that matches the
-     * query
+     * Perform a structured query and return the set of YelpRestaurants that matches the query
      *
      * @param queryString is not null
-     * @return the set of objects that matches the query
+     * @return the set of YelpRestaurants that matches the query
      */
     public Set<YelpRestaurant> getMatches(String queryString) {
         return new YelpQueryParser(this).getMatches(queryString);

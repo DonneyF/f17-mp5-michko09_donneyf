@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A helper class that performs structured querying for YelpRestaurants
+ */
 public class YelpQueryParser {
 
     private YelpDb database;
@@ -25,6 +28,12 @@ public class YelpQueryParser {
         this.database = database;
     }
 
+    /**
+     * Perform a structured query and return the set of YelpRestaurants that matches the query
+     *
+     * @param queryString is not null
+     * @return the set of YelpRestaurants that matches the query
+     */
     public Set<YelpRestaurant> getMatches(String queryString) {
         Set<YelpRestaurant> allMatches = new HashSet<>();
 
@@ -108,6 +117,10 @@ public class YelpQueryParser {
         return allMatches;
     }
 
+    /**
+     * Parses the input query string and modifies the queries list that contains all possible filter cases
+     * @param queryString is not null
+     */
     private void getStringMatches(String queryString) {
         CharStream stream = new ANTLRInputStream(queryString);
         QueryLexer lexer = new QueryLexer(stream);

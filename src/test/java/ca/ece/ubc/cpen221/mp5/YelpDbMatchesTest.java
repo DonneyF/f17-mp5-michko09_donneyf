@@ -46,13 +46,13 @@ public class YelpDbMatchesTest {
     @Test
     public void test2() {
         Set<YelpRestaurant> restaurantSet = db.getMatches("in(Telegraph Ave) && (category(Chinese) || category(Italian)) " +
-                "&& (price = 2 || price = 4)");
+                "&& (price > 2 || price < 4)");
 
         int numMatches = 0;
         for (YelpRestaurant currentRestaurant : allRestaurants) {
             if (currentRestaurant.getNeighborhoods().contains("Telegraph Ave")) {
                 if (currentRestaurant.getCategories().contains("Chinese") || currentRestaurant.getCategories().contains("Italian")) {
-                    if (currentRestaurant.getPrice() == 2 || currentRestaurant.getPrice() == 4) {
+                    if (currentRestaurant.getPrice() > 2 || currentRestaurant.getPrice() < 4) {
                         numMatches++;
                         assertTrue(restaurantSet.contains(currentRestaurant));
                     }
@@ -65,14 +65,14 @@ public class YelpDbMatchesTest {
     @Test
     public void test3() {
         Set<YelpRestaurant> restaurantSet = db.getMatches("(in(Telegraph Ave) || in(UBC)) && (category(Chinese) || category(Italian) " +
-                "|| category(Korean)) && (price = 2 || price = 4 || price = 5)");
+                "|| category(Korean)) && (price >= 2 || price <= 4 || price = 5)");
 
         int numMatches = 0;
 
         for (YelpRestaurant currentRestaurant : allRestaurants) {
             if (currentRestaurant.getNeighborhoods().contains("Telegraph Ave") || currentRestaurant.getNeighborhoods().contains("UBC")) {
                 if (currentRestaurant.getCategories().contains("Chinese") || currentRestaurant.getCategories().contains("Italian") || currentRestaurant.getCategories().contains("Korean")) {
-                    if (currentRestaurant.getPrice() == 2 || currentRestaurant.getPrice() == 4 || currentRestaurant.getPrice() == 5) {
+                    if (currentRestaurant.getPrice() >= 2 || currentRestaurant.getPrice() <= 4 || currentRestaurant.getPrice() == 5) {
                         numMatches++;
                         assertTrue(restaurantSet.contains(currentRestaurant));
                     }
@@ -85,13 +85,13 @@ public class YelpDbMatchesTest {
     @Test
     public void test4() {
         Set<YelpRestaurant> restaurantSet = db.getMatches("(name(Boston's Pizza) || in(UBC)) && (category(Chinese) || category(Italian) " +
-                "|| category(Korean)) && (price = 2 || price = 4 || price = 5 || rating = 5)");
+                "|| category(Korean)) && (rating = 5 || rating <= 3)");
 
         int numMatches = 0;
         for (YelpRestaurant currentRestaurant : allRestaurants) {
             if (currentRestaurant.getName().equals("Boston's Pizza") || currentRestaurant.getNeighborhoods().contains("UBC")) {
                 if (currentRestaurant.getCategories().contains("Chinese") || currentRestaurant.getCategories().contains("Italian") || currentRestaurant.getCategories().contains("Korean")) {
-                    if (currentRestaurant.getPrice() == 2 || currentRestaurant.getPrice() == 4 || currentRestaurant.getPrice() == 5 || currentRestaurant.getStars() == 5) {
+                    if (currentRestaurant.getStars() == 5 || currentRestaurant.getStars() <= 3) {
                         numMatches++;
                         assertTrue(restaurantSet.contains(currentRestaurant));
                     }
@@ -103,12 +103,12 @@ public class YelpDbMatchesTest {
 
     @Test
     public void test5() {
-        Set<YelpRestaurant> restaurantSet = db.getMatches("category(Chinese) && (rating = 4.5 || rating = 2)");
+        Set<YelpRestaurant> restaurantSet = db.getMatches("category(Chinese) && (rating > 4.5 || rating < 2)");
 
         int numMatches = 0;
         for (YelpRestaurant currentRestaurant : allRestaurants) {
             if (currentRestaurant.getCategories().contains("Chinese")) {
-                if (currentRestaurant.getStars() == 4.5 || currentRestaurant.getStars() == 2) {
+                if (currentRestaurant.getStars() > 4.5 || currentRestaurant.getStars() < 2) {
                     numMatches++;
                     assertTrue(restaurantSet.contains(currentRestaurant));
                 }

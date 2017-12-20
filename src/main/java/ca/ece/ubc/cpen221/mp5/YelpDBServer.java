@@ -187,15 +187,16 @@ public class YelpDBServer {
         // Remove ADDRESTAURANT and get the string to parse
         String possibleJSONString = command.substring(addYelpRestaurant.length());
         // Check required fields
+        if(!possibleJSONString.contains("name")) return "ERR: INVALID_RESTAURANT_STRING";
         if(!possibleJSONString.contains("latitude")) return "ERR: INVALID_RESTAURANT_STRING";
         if(!possibleJSONString.contains("longitude")) return "ERR: INVALID_RESTAURANT_STRING";
         try {
-
             YelpRestaurant yelpRestaurant = database.addRestaurant(possibleJSONString);
 
             return "RESTAURANT_ADD_SUCCESS: " + new ObjectMapper().writeValueAsString(yelpRestaurant).replaceAll(System.lineSeparator(), "")
                     .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
+            e.printStackTrace();
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_RESTAURANT_STRING";
             } else {
@@ -235,6 +236,7 @@ public class YelpDBServer {
 
         // Remove ADDREVIEW and get JSON string to parse
         String possibleJSONString = command.substring(addReview.length());
+        System.out.println(possibleJSONString);
 
         // Check required fields
         if (!possibleJSONString.contains("business_id")) return "ERR: INVALID_REVIEW_STRING";
