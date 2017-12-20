@@ -157,13 +157,15 @@ public class QueryCreator extends QueryBaseListener {
         // thus must be added to all paths as a requirement
         if (numOrPaths == 0) {
             for (HashMap paths : masterList) {
-                paths.put("stars", equalityCheck(ineq, rating));
+                paths.put("stars", ineq + rating);
+                //paths.put("stars", equalityCheck(ineq, rating));
             }
         } else {
             // If this is a result of an OR Statement, only need to add this to one branch
             int count = 0;
             while(count < repeatingFactor / counter) {
-                masterList.get(indexingFactor - 1).put("stars", equalityCheck(ineq, rating));
+                masterList.get(indexingFactor - 1).put("stars", ineq + rating);
+                //masterList.get(indexingFactor - 1).put("stars", equalityCheck(ineq, rating));
                 indexingFactor--;
                 count++;
             }
@@ -180,13 +182,15 @@ public class QueryCreator extends QueryBaseListener {
         // thus must be added to all paths as a requirement
         if (numOrPaths == 0) {
             for (HashMap paths : masterList) {
-                paths.put("price", equalityCheck(ineq, price));
+                paths.put("price", ineq + price);
+                //paths.put("price", equalityCheck(ineq, price));
             }
         } else {
             // If this is a result of an OR Statement, only need to add this to one branch
             int count = 0;
             while(count < repeatingFactor / counter) {
-                masterList.get(indexingFactor - 1).put("price", equalityCheck(ineq, price));
+                masterList.get(indexingFactor - 1).put("price", ineq + price);
+                //masterList.get(indexingFactor - 1).put("price", equalityCheck(ineq, price));
                 indexingFactor--;
                 count++;
             }
