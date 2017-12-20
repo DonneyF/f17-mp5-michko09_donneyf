@@ -1,5 +1,7 @@
 package ca.ece.ubc.cpen221.mp5.query;
 
+import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurantQuery;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
 public class QueryCreator extends QueryBaseListener {
 
     private List<HashMap<String, String>> masterList;
+    private List<YelpRestaurantQuery> queries;
     private int numOrPaths;
     private int repeatingFactor;
     private int indexingFactor;
@@ -157,14 +160,14 @@ public class QueryCreator extends QueryBaseListener {
         // thus must be added to all paths as a requirement
         if (numOrPaths == 0) {
             for (HashMap paths : masterList) {
-                paths.put("stars", ineq + rating);
+                paths.put("rating", ineq + rating);
                 //paths.put("stars", equalityCheck(ineq, rating));
             }
         } else {
             // If this is a result of an OR Statement, only need to add this to one branch
             int count = 0;
             while(count < repeatingFactor / counter) {
-                masterList.get(indexingFactor - 1).put("stars", ineq + rating);
+                masterList.get(indexingFactor - 1).put("rating", ineq + rating);
                 //masterList.get(indexingFactor - 1).put("stars", equalityCheck(ineq, rating));
                 indexingFactor--;
                 count++;
@@ -198,71 +201,57 @@ public class QueryCreator extends QueryBaseListener {
         }
     }
 
-    /**
-     * Determines what kind of equals operation the current node represents.
-     *
-     * @param equality, which:
-     *      - is the string format of the equality sign.
-     *      - is not null;
-     *
-     * @param value, which:
-     *      - is the value which comes after the equality sign in string format.
-     *      - is not null.
-     *
-     * @return a string, which:
-     *      - is the evaluated version of the equality expression.
-     *      - Ex. if input is: <= 5, the output is: 54321.
-     */
-    private String equalityCheck(String equality, String value) {
-        String E = "=";
-        String GT = ">";
-        String GTE = ">=";
-        String LT = "<";
-        String LTE = "<=";
-        String result = null;
-        int count;
-        StringBuilder stringBuild = new StringBuilder();
+    private void formatQuery(){
+        queries = new ArrayList<>();
+        for(HashMap<String, String> currentNode : masterList) {
+            YelpRestaurantQuery currentQuery = new YelpRestaurantQuery();
+            // Format the prices
+            if (currentNode.containsKey("price")){
+                String priceWithEquality = currentNode.get("price");
+                // Get index of the first integer
+                String firstNumber = priceWithEquality.replaceAll("^\\D*(\\d+).*", "$1");
+                int integerIndex = priceWithEquality.indexOf(firstNumber);
 
-        if (equality.equals(GT)) {
-            count = Integer.parseInt(value) + 1;
-            while (count <= 5) {
-                stringBuild.append(count);
-                count++;
+                String equality = priceWithEquality.substring(0, integerIndex);
+                int value = Integer.parseInt(priceWithEquality.substring(integerIndex, priceWithEquality.length()));
+                currentQuery.setPrice(value);
+                currentQuery.setPriceEquality(equality);
             }
-        } else if (equality.equals(GTE)) {
-            count = Integer.parseInt(value);
-            while (count <= 5) {
-                stringBuild.append(count);
-                count++;
+            // Format the ratings
+            if (currentNode.containsKey("rating")){
+                String priceWithEquality = currentNode.get("rating");
+                // Get index of the first integer
+                String firstNumber = priceWithEquality.replaceAll("^\\D*(\\d+).*", "$1");
+                int integerIndex = priceWithEquality.indexOf(firstNumber);
+
+                String equality = priceWithEquality.substring(0, integerIndex);
+                double value = Double.parseDouble(priceWithEquality.substring(integerIndex, priceWithEquality.length()));
+
+                currentQuery.setRating(value);
+                currentQuery.setRatingEquality(equality);
             }
-        } else if (equality.equals(LT)) {
-            count = Integer.parseInt(value) - 1;
-            while (count >= 1) {
-                stringBuild.append(count);
-                count--;
-            }
-        } else if (equality.equals(LTE)) {
-            count = Integer.parseInt(value);
-            while (count >= 1) {
-                stringBuild.append(count);
-                count--;
-            }
-        } else {
-            count = Integer.parseInt(value);
-            stringBuild.append(count);
+
+            // Get categories
+            if (currentNode.containsKey("categories")) currentQuery.setCategory(currentNode.get("categories"));
+
+            // Get neighborhoods
+            if (currentNode.containsKey("neighborhoods")) currentQuery.setNeighborhood(currentNode.get("neighborhoods"));
+
+            // Get Name
+            if (currentNode.containsKey("name")) currentQuery.setName(currentNode.get("name"));
+
+            queries.add(currentQuery);
         }
-
-        result = stringBuild.toString();
-        return result;
     }
 
     /**
-     * Returns the list containing all viable solutions to the input Query.
+     * Returns the YelpRestaurantQuery containing all viable solutions to the input Query.
      *
      * @return a list, which:
-     *      - contains all HashMaps representing possible database solutions to the query.
+     *      - contains all YelpRestaurantQuery representing possible database solutions to the query.
      */
-    public List<HashMap<String, String>> getMasterList() {
-        return masterList;
+    public List<YelpRestaurantQuery> getQueries() {
+        this.formatQuery();
+        return new ArrayList<>(queries);
     }
 }

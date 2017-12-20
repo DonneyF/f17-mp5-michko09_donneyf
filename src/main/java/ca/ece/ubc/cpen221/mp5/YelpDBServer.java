@@ -162,7 +162,7 @@ public class YelpDBServer {
      */
     private String getYelpRestaurant(String command) {
         // Check if the input string is a valid command. Must contain at least one word.
-        if (command.split(" ").length == 1) return "ERR: INVALID_YelpRestaurant_STRING";
+        if (command.split(" ").length == 1) return "ERR: INVALID_RESTAURANT_STRING";
 
         // Get the restaurant and parse the result to a string
         List<YelpRestaurant> allYelpRestaurants = database.getRestaurants();
@@ -177,8 +177,7 @@ public class YelpDBServer {
                 }
             }
         }
-
-        return "ERR: NO_SUCH_YelpRestaurant";
+        return "ERR: NO_SUCH_RESTAURANT";
     }
 
     private String addYelpRestaurant(String command) {
@@ -198,7 +197,7 @@ public class YelpDBServer {
                     .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
-                return "ERR: INVALID_YelpRestaurant_STRING";
+                return "ERR: INVALID_RESTAURANT_STRING";
             } else {
                 return "ERR: " + e.getMessage();
             }
@@ -222,7 +221,7 @@ public class YelpDBServer {
                     .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
-                return "ERR: INVALID_YelpUser_STRING";
+                return "ERR: INVALID_USER_STRING";
             } else {
                 e.printStackTrace();
                 return e.getMessage();
@@ -250,7 +249,7 @@ public class YelpDBServer {
                 .replaceAll(",",", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
             if (e.getClass().equals(JsonParseException.class)) {
-                return "ERR: INVALID_YelpRestaurant_STRING";
+                return "ERR: INVALID_RESTAURANT_STRING";
             } else return "ERR: " + e.getMessage();
         }
     }

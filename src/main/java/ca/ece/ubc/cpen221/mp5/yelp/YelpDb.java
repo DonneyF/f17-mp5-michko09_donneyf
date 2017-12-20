@@ -235,8 +235,6 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
                     .replaceAll("\\s", "-").replaceAll("[^a-z0-9-]", ""));
             restaurant.setAll(input);
 
-            System.out.println(restaurant);
-
             YelpRestaurant yelpRestaurant = new ObjectMapper().readValue(restaurant.toString(), YelpRestaurant.class);
             restaurants.put(id, yelpRestaurant);
 
@@ -284,8 +282,8 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param queryString is not null
      * @return the set of objects that matches the query
      */
-    public Set getMatches(String queryString) {
-        return null;
+    public Set<YelpRestaurant> getMatches(String queryString) {
+        return new YelpQueryParser(this).getMatches(queryString);
     }
 
     /**

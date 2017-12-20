@@ -3,7 +3,6 @@ package ca.ece.ubc.cpen221.mp5;
 import ca.ece.ubc.cpen221.mp5.query.QueryCreator;
 import ca.ece.ubc.cpen221.mp5.query.QueryLexer;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -30,11 +29,8 @@ public class QueryTests {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        try {
-            System.out.println(mapper.writeValueAsString(listener.getMasterList()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+
+        System.out.println(listener.getQueries());
     }
 
     @Test
@@ -51,7 +47,7 @@ public class QueryTests {
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
 
-        System.out.println(listener.getMasterList());
+        System.out.println(listener.getQueries());
     }
 
     @Test
@@ -68,7 +64,7 @@ public class QueryTests {
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
 
-        System.out.println(listener.getMasterList());
+        System.out.println(listener.getQueries());
     }
 
     @Test
@@ -85,12 +81,12 @@ public class QueryTests {
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
 
-        System.out.println(listener.getMasterList());
+        System.out.println(listener.getQueries());
     }
 
     @Test
     public void test5() {
-        CharStream stream = new ANTLRInputStream("category(Chinese) && (rating = 4.5 || rating  = 2)");
+        CharStream stream = new ANTLRInputStream("category(Chinese) && (rating = 4.5 || rating = 2)");
         QueryLexer lexer = new QueryLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         QueryParser parser = new QueryParser(tokens);
@@ -101,7 +97,7 @@ public class QueryTests {
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
 
-        System.out.println(listener.getMasterList());
+        System.out.println(listener.getQueries());
     }
 
     @Test
@@ -117,7 +113,7 @@ public class QueryTests {
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
 
-        System.out.println(listener.getMasterList());
+        System.out.println(listener.getQueries());
     }
 
 
