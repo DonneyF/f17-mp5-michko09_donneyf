@@ -8,13 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 import java.awt.geom.Point2D;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -33,8 +30,6 @@ public class KMeansTest {
         List<Map<String, Object>> result = kMeans.toList();
 
         List<Point2D> centroids = kMeans.getCentroids();
-
-        List<Set<YelpRestaurant>> listOfSets = kMeans.getListofSets();
 
         for(Map<String, Object> restaurant : result){
             Point2D restaurantLocation = new Point2D.Double((Double)restaurant.get("x"), (Double)restaurant.get("y"));
@@ -83,8 +78,6 @@ public class KMeansTest {
         try {
             kMeans.toFile("data/results.json");
             File file = new File("data/results.json");
-
-            BufferedReader br = new BufferedReader(new FileReader(file));
 
             List<Map<String, Object>> results = new ObjectMapper().readValue(file, new TypeReference<List<Map>>(){});
             // No clusters equal to or greater than 40, since clusters start numbering at 0

@@ -8,15 +8,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * A Yelp review object. Stores information of a review created on Yelp
- *
- * Representation Invariant: Type is "review" and reviewId is not null
- *
- * Abstraction Function: AF(this) -> A review such that text pertains to businessId.
  */
 @JsonDeserialize(using = YelpReviewDeserializer.class)
 @JsonSerialize(using = YelpReviewSerializer.class)
 public class YelpReview implements Review {
 
+	/*
+	 * Representation Invariant: Type is "review" and reviewId is not null
+	 *
+	 * Abstraction Function: AF(this) -> A review such that text pertains to businessId.
+	 */
 	private final String type;
 	private String businessId;
 	private YelpVotes votes;

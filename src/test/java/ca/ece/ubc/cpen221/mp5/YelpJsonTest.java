@@ -151,6 +151,7 @@ public class YelpJsonTest {
         ObjectMapper mapper = new ObjectMapper();
         try {
             YelpUser user = mapper.readValue(json, YelpUser.class);
+            user.setName("24");
         } catch (IOException e){
             assertTrue(e.getClass().equals(JsonParseException.class));
         }

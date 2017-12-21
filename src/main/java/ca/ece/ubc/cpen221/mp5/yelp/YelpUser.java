@@ -8,15 +8,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * A Yelp user object. Stores information of a user registered on Yelp
- *
- * Representation Invariant: Type is "user" and userID is not null.
- *
- * Abstraction Function: AF(this) -> A user such that url contains a parsed form of name.
  */
 @JsonDeserialize(using = YelpUserDeserializer.class)
 @JsonSerialize(using = YelpUserSerializer.class)
 public class YelpUser implements User {
 
+	/*
+	 * Representation Invariant: Type is "user" and userID is not null.
+	 *
+	 * Abstraction Function: AF(this) -> A user such that url contains a parsed form of name.
+	 */
 	private String url;
 	private int reviewCount;
 	private final String type;

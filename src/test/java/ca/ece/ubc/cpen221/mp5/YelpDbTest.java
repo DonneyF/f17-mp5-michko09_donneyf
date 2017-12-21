@@ -44,18 +44,21 @@ public class YelpDbTest {
     public void test2(){
         // Test illegal user
         YelpUser newUser = db.addUser("{\"nasa\": \"Sathish G.\"}");
+        newUser.getAverageStars();
    }
 
     @Test(expected = IllegalArgumentException.class)
     public void test3(){
         // Test illegal restaurant
         YelpRestaurant newRestaurant = db.addRestaurant("{\"na23545me\": \"Sathish G.\"}");
+        newRestaurant.setPrice(4);
    }
 
     @Test(expected = IllegalArgumentException.class)
     public void test4(){
         // Test illegal review
         YelpReview newReview = db.addReview("{\"tewesrdgtfxt\": \"Sathish G.\"}");
+        newReview.setBusinessId("5325");
     }
 
     @Test
@@ -80,5 +83,30 @@ public class YelpDbTest {
 
         // Last instance of "cluster" should have a value of 39
         assertTrue(json.substring(json.lastIndexOf("cluster"), json.lastIndexOf("cluster") + 15).contains("39"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test6(){
+        // Test existing review
+        YelpReview newReview = db.addReview("{\"business_id\": \"1CBs84C-a-cuA3vncXVSAw\", \"review_id\": \"hbwE4C_uMpj95xay-e919g\", \"text\": \"Some test string Test\", \"stars\": 3, \"user_id\": \"90wm_01FAIqhcgV_mPON9Q\"}");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test7(){
+        // Test existing restaurant
+        YelpRestaurant yelpRestaurant = db.addRestaurant("{\"business_id\": \"qHmamQPCAKkia9X0uryA8g\", \"longitude\": -122.5122, \"name\": \"Test Restaurant\", \"latitude\": 37.98541, \"state\": \"CA\", \"price\": 1}");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test8(){
+        // Test existing user
+        YelpUser yelpUser = db.addUser("{\"user_id\": \"a8XQk3YbBKBgctzszG_3Ng\", \"name\": \"Sathish G.\"}");
+    }
+
+    @Test
+    public void test9(){
+        // Test some user ID
+        YelpUser yelpUser = db.addUser("{\"user_id\": \"a8XQk3YbBKB2ctzszG_3Ng\", \"name\": \"Sathish G.\"}");
+        assertEquals("http://www.yelp.com/user_details?userid=a8XQk3YbBKB2ctzszG_3Ng", yelpUser.getUrl());
     }
 }

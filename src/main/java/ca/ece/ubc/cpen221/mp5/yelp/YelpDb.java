@@ -194,22 +194,27 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         try {
             // Verify JSON by adding to the ObjectNode. Copy statements from input to generic and set values
             ObjectNode input = (ObjectNode) mapper.readTree(userJson);
-            // Get a random ID
-            String id = generateRandomID();
+
             // Parse user ID and url. Input must contain user's name
             if (!input.toString().contains("name"))
                 throw new IllegalArgumentException("Input string not valid. Missing \"name\" field");
-            if (input.has("user_id") && IDs.contains(input.get("user_id").asText()))
-                throw new IllegalArgumentException("User ID already exists");
 
-            input.put("user_id", id);
-            input.put("url", user.get("url").asText() + id);
+            if (input.has("user_id")){
+                if (IDs.contains(input.get("user_id").asText())) throw new IllegalArgumentException("User ID already exists");
+                input.put("url", user.get("url").asText() + input.get("user_id").asText());
+            }
+            else {
+                // Get a random ID
+                String id = generateRandomID();
+                input.put("user_id", id);
+                input.put("url", user.get("url").asText() + id);
+            }
             user.setAll(input);
 
             YelpUser yelpUser = new ObjectMapper().readValue(user.toString(), YelpUser.class);
             yelpUser.setVotes(new YelpVotes());
 
-            users.put(id, yelpUser);
+            users.put(yelpUser.getUserId(), yelpUser);
             return yelpUser;
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
@@ -229,21 +234,27 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         try {
             // Verify JSON by adding to the ObjectNode. Copy statements from input to generic and set values
             ObjectNode input = (ObjectNode) mapper.readTree(restaurantJson);
-            // Get a random ID
-            String id = generateRandomID();
+
             // Parse user ID and url. Input must contain business name
             if (!input.toString().contains("name"))
                 throw new IllegalArgumentException("Input string not valid. Missing \"name\" field");
+
+            // Check if business ID exists in the request. If not, use the random ID.
             if (input.has("business_id") && IDs.contains(input.get("business_id").asText()))
                 throw new IllegalArgumentException("Business ID already exists");
+            else {
+                // Get a random ID
+                String id = generateRandomID();
+                input.put("business_id", id);
+            }
 
-            input.put("business_id", id);
             input.put("url", restaurant.get("url").asText() + input.get("name").asText().toLowerCase()
                     .replaceAll("\\s", "-").replaceAll("[^a-z0-9-]", ""));
             restaurant.setAll(input);
 
             YelpRestaurant yelpRestaurant = new ObjectMapper().readValue(restaurant.toString(), YelpRestaurant.class);
-            restaurants.put(id, yelpRestaurant);
+
+            restaurants.put(yelpRestaurant.getBusinessId(), yelpRestaurant);
 
             return yelpRestaurant;
 
@@ -265,19 +276,22 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
         try {
             // Verify JSON by adding to the ObjectNode. Copy statements from input to generic and set values
             ObjectNode input = (ObjectNode) mapper.readTree(reviewJson);
-            // Get a random ID
-            String id = generateRandomID();
             // Parse user ID and url. Input must contain business name
 
             if (!input.toString().contains("text"))
                 throw new IllegalArgumentException("Input string not valid. Missing \"text\" field");
-            if (input.has("review_id") && IDs.contains(input.get("review_id").asText()))
-                throw new IllegalArgumentException("Review ID already exists");
-            input.put("review_id", id);
+
+            if (input.has("review_id") && IDs.contains(input.get("review_id").asText())) throw new IllegalArgumentException("Review ID already exists");
+            else {
+                // Get a random ID
+                String id = generateRandomID();
+                input.put("review_id", id);
+            }
+
             review.setAll(input);
 
             YelpReview yelpReview = new ObjectMapper().readValue(input.toString(), YelpReview.class);
-            reviews.put(id, yelpReview);
+            reviews.put(yelpReview.getReviewId(), yelpReview);
 
             return yelpReview;
 

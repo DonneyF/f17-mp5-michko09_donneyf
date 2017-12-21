@@ -37,6 +37,7 @@ public class YelpServerTest {
                     YelpClient yelpClient = new YelpClient("localhost", 4949);
                     yelpClient.sendRequest("ADDUSER {\"name\": \"Sathish G.\"}");
                     serverResponse[0] = yelpClient.getReply();
+                    yelpClient.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -72,6 +73,7 @@ public class YelpServerTest {
                     YelpClient yelpClient = new YelpClient("localhost", 4949);
                     yelpClient.sendRequest("ADDRESTAURANT {\"longitude\": -122.5122, \"name\": \"Test Restaurant\", \"latitude\": 37.98541, \"state\": \"CA\", \"price\": 1}");
                     serverResponse[0] = yelpClient.getReply();
+                    yelpClient.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -80,7 +82,6 @@ public class YelpServerTest {
 
         client.start();
         try {
-
             client.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -110,6 +111,7 @@ public class YelpServerTest {
                     YelpClient yelpClient = new YelpClient("localhost", 4949);
                     yelpClient.sendRequest("ADDREVIEW {\"business_id\": \"1CBs84C-a-cuA3vncXVSAw\", \"text\": \"Some test string Test\", \"stars\": 3, \"user_id\": \"90wm_01FAIqhcgV_mPON9Q\"}");
                     serverResponse[0] = yelpClient.getReply();
+                    yelpClient.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -118,7 +120,6 @@ public class YelpServerTest {
 
         client.start();
         try {
-
             client.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -140,35 +141,23 @@ public class YelpServerTest {
         if(!server.isAlive()) server.start();
         final String[] serverResponse = new String[1];
 
-        Thread client1 = new Thread(new Runnable() {
+        Thread client = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     YelpClient yelpClient = new YelpClient("localhost", 4949);
                     yelpClient.sendRequest("ADDRESTAURANT {\"longitude\": -122.5822, \"name\": \"Other Restaurant\", \"latitude\": 37.28541, \"state\": \"CA\", \"price\": 1}");
                     serverResponse[0] = yelpClient.getReply();
+                    yelpClient.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         });
 
-        Thread client2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    YelpClient yelpClient = new YelpClient("localhost", 4949);
-                    yelpClient.sendRequest("ADDRESTAURANT {\"longitude\": -122.5822, \"name\": \"Other Restaurant\", \"latitude\": 37.28541, \"state\": \"CA\", \"price\": 1}");
-                    serverResponse[0] = yelpClient.getReply();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        client1.start();
+        client.start();
         try {
-            client1.join();
+            client.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -190,7 +179,7 @@ public class YelpServerTest {
     }
 
     @Test
-    public void test5() throws InterruptedException {
+    public void test5() {
         // Test invalid strings
         if(!server.isAlive()) server.start();
         try {
@@ -207,6 +196,19 @@ public class YelpServerTest {
             yelpClient.sendRequest("ADDBUSINESS {\"longitude\": -122.5122,}");
             assertTrue(yelpClient.getReply().contains("ERR: ILLEGAL_REQUEST"));
 
+            yelpClient.sendRequest("ADDRESTAURANT \"open\": true, \"url\": \"http://www.yelp.com/biz/top-dog-berkeley\", \"longitude\": -122.2574328, \"neighborhoods\": [\"Telegraph Ave\", \"UC Campus Area\"], \"business_id\": \"qHmamQPCAKkia9X0uryA8g\", \"name\": \"Top Dog\", \"categories\": [\"Restaurants\", \"Hot Dogs\"], \"state\": \"CA\", \"type\": \"business\", \"stars\": 4.5, \"city\": \"Berkeley\", \"full_address\": \"2534 Durant Ave\\nTelegraph Ave\\nBerkeley, CA 94704\", \"review_count\": 1270, \"photo_url\": \"http://s3-media4.ak.yelpcdn.com/bphoto/nFfca2I2F0Az2JmGQmAipg/ms.jpg\", \"schools\": [\"University of California at Berkeley\"], \"latitude\": 37.8678945, \"price\": 1}");
+            assertTrue(yelpClient.getReply().contains("ERR: INVALID_RESTAURANT_STRING"));
+
+            yelpClient.sendRequest("ADDREVIEW \"type\": \"review\", \"business_id\": \"1CBs84C-a-cuA3vncXVSAw\", \"votes\": {\"cool\": 0, \"useful\": 0, \"funny\": 0}, \"review_id\": \"hbwE4C_uMpj95xay-e919g\", \"text\": \"I used to have a roommate who felt that LaVal's had the bcheesed.\\n\\nOverall, sub-par.\", \"stars\": 2, \"user_id\": \"34bU3gnSHUFHNPLNvwl8fA\", \"date\": \"2006-08-17\"}");
+            assertTrue(yelpClient.getReply().contains("ERR: INVALID_REVIEW_STRING"));
+
+            yelpClient.sendRequest("ADDUSER \"url\": \"http://www.yelp.com/user_details?userid=a8XQk3YbBKBgctzszG_3Ng\", \"votes\": {\"funny\": 38, \"useful\": 83, \"cool\": 39}, \"review_count\": 121, \"type\": \"user\", \"user_id\": \"a8XQk3YbBKBgctzszG_3Ng\", \"name\": \"Chi N.\", \"average_stars\": 3.81818181818182}");
+            assertTrue(yelpClient.getReply().contains("ERR: INVALID_USER_STRING"));
+
+            yelpClient.sendRequest("GETRESTAURANT CBs84C-acuA3vncXVSAw");
+            assertTrue(yelpClient.getReply().contains("ERR: NO_SUCH_RESTAURANT"));
+
+            yelpClient.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -222,6 +224,7 @@ public class YelpServerTest {
             YelpClient yelpClient = new YelpClient("localhost", 4949);
             yelpClient.sendRequest("QUERY in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2");
             serverResponse[0] = yelpClient.getReply();
+            yelpClient.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -239,10 +242,10 @@ public class YelpServerTest {
             YelpClient yelpClient = new YelpClient("localhost", 4949);
             yelpClient.sendRequest("QUERY in345t5ttt(Telegraph Ave) && (category(Chinese) teswg|| category(Italian)) && price <= 2");
             serverResponse[0] = yelpClient.getReply();
+            yelpClient.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         assertTrue(serverResponse[0].contains("INVALID_QUERY"));
     }
 }

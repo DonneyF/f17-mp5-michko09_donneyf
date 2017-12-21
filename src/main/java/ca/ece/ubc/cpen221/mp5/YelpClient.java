@@ -8,22 +8,25 @@ import java.util.Scanner;
  * YelpClient is a server-client initiator which creates a socket that will be attached to a main server. Through this
  * client model a user will be able to input certain requests into the server that involve modifying or searching for
  * an element in the database.
-
- * YelpClient in this MP is mainly used for a local host server: Port 4949.
- *
- * Representation Invariant:
- *      - Once an instance of a client has been initialized with a specific port number, it must keep that port
- *        number until it has been terminated or disconnected from the server.
- *      - A request made by the client will have a response given by the server, whether it be a solution or an
- *        error message from improper request formatting.
- *      - socket, in and out are not null.
- *
- * Abstraction Function:
- *      - Not valid since this class does not "map" a specific value to a specific domain. It simply initiates a client.
- *
- * As with YelpDBServer, we are using the FibonnaciClient example Professor Sathish mentioned in the README file.
  */
 public class YelpClient {
+
+    /*
+     * YelpClient in this MP is mainly used for a local host server: Port 4949.
+     *
+     * Representation Invariant:
+     *      - Once an instance of a client has been initialized with a specific port number, it must keep that port
+     *        number until it has been terminated or disconnected from the server.
+     *      - A request made by the client will have a response given by the server, whether it be a solution or an
+     *        error message from improper request formatting.
+     *      - socket, in and out are not null.
+     *
+     * Abstraction Function:
+     *      - Not valid since this class does not "map" a specific value to a specific domain. It simply initiates a client.
+     *
+     * As with YelpDBServer, we are using the FibonnaciClient example Professor Sathish mentioned in the README file.
+     */
+
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
@@ -125,6 +128,8 @@ public class YelpClient {
             client.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
+        } finally {
+            System.setIn(System.in);
         }
     }
 

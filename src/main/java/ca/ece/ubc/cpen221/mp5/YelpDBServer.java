@@ -4,7 +4,6 @@ import ca.ece.ubc.cpen221.mp5.yelp.YelpDb;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpReview;
 import ca.ece.ubc.cpen221.mp5.yelp.YelpUser;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,21 +20,22 @@ import java.util.Set;
  * relating to the input. If no results are found or if the input request is not valid then it throws an
  * appropriate error message. Since YelpDBServer is a multithreaded server multiple clients are able to connect
  * to the server and send requests at the same time.
- *
- * YelpDBServer in this MP is mainly used for a local host server: Port 4949.
- *
- * Representation Invariant:
- *      - Once an instance of a server has been initialized with a specific port number, it must keep that port
- *        number until it has been terminated or shut down.
- *      - A request made by the client will have a response given by the server, whether it be a solution or an
- *        error message from improper request formatting.
- *
- * Abstraction Function:
- *      - Not valid since this class does not "map" a specific value to a specific domain. It simply initiates a server.
- *
- * As with YelpClient, we are using the FibonnaciMultiServer example Professor Sathish mentioned in the README file.
  */
 public class YelpDBServer {
+
+    /*
+     * YelpDBServer in this MP is mainly used for a local host server: Port 4949.
+     *
+     * Representation Invariant:
+     * - Once an instance of a server has been initialized with a specific port number, it must keep that port
+     * number until it has been terminated or shut down.
+     * - A request made by the client will have a response given by the server, whether it be a solution or an
+     * error message from improper request formatting.
+     *
+     * Abstraction Function:
+     * - Not valid since this class does not "map" a specific value to a specific domain. It simply initiates a server.
+     * As with YelpClient, we are using the FibonnaciMultiServer example Professor Sathish mentioned in the README file.
+     */
 
     private ServerSocket serverSocket;
 
@@ -148,9 +148,8 @@ public class YelpDBServer {
      *                 3. ADDYelpRestaurant - adds a YelpRestaurant to the database, with all details included.
      *                 4. ADDREVIEW - adds a review to the database, with all details included.
      *                 5. QUERY - searches for a restaurant in the database, keeping in mind specific criteria.
-     *
      * @return a string, which:
-     *                 - is the result from the input request, or an error message if the input string is invalid.
+     * - is the result from the input request, or an error message if the input string is invalid.
      */
     private String determineOperation(String command) {
         if (command.contains(getRestaurantCommand)) return getRestaurant(command);
@@ -165,12 +164,11 @@ public class YelpDBServer {
      * Takes in a client request, which specifically asks to find a certain restaurant in the database.
      *
      * @param command, which:
-     *      - is not null.
-     *      - is a string with the keyword: GETRESTAURANT.
-     *
+     *                 - is not null.
+     *                 - is a string with the keyword: GETRESTAURANT.
      * @return a string, which:
-     *      - is the restaurant result from the database search.
-     *      - or an error message if no such restaurant exists or the input command was of invalid structure.
+     * - is the restaurant result from the database search.
+     * - or an error message if no such restaurant exists or the input command was of invalid structure.
      */
     private String getRestaurant(String command) {
         // Check if the input string is a valid command. Must contain at least one word.
@@ -196,12 +194,11 @@ public class YelpDBServer {
      * Takes in a client request, which specifically asks to add a certain restaurant to the database.
      *
      * @param command, which:
-     *      - is not null.
-     *      - is a string with the keyword: ADDRESTAURANT.
-     *
+     *                 - is not null.
+     *                 - is a string with the keyword: ADDRESTAURANT.
      * @return a string, which:
-     *      - "RESTAURANT_ADD_SUCCESS: + (details)" if the operation was successful.
-     *      - or an error message if the command was of invalid structure.
+     * - "RESTAURANT_ADD_SUCCESS: + (details)" if the operation was successful.
+     * - or an error message if the command was of invalid structure.
      */
     private String addRestaurant(String command) {
         // Check if command is of right format
@@ -210,21 +207,16 @@ public class YelpDBServer {
         // Remove ADDRESTAURANT and get the string to parse
         String possibleJSONString = command.substring(addRestaurantCommand.length());
         // Check required fields
-        if(!possibleJSONString.contains("name")) return "ERR: INVALID_RESTAURANT_STRING";
-        if(!possibleJSONString.contains("latitude")) return "ERR: INVALID_RESTAURANT_STRING";
-        if(!possibleJSONString.contains("longitude")) return "ERR: INVALID_RESTAURANT_STRING";
+        if (!possibleJSONString.contains("name")) return "ERR: INVALID_RESTAURANT_STRING";
+        if (!possibleJSONString.contains("latitude")) return "ERR: INVALID_RESTAURANT_STRING";
+        if (!possibleJSONString.contains("longitude")) return "ERR: INVALID_RESTAURANT_STRING";
         try {
             YelpRestaurant yelpRestaurant = database.addRestaurant(possibleJSONString);
 
             return "RESTAURANT_ADD_SUCCESS: " + new ObjectMapper().writeValueAsString(yelpRestaurant).replaceAll(System.lineSeparator(), "")
-                    .replaceAll(",",", ").replaceAll("\":", "\": ");
+                    .replaceAll(",", ", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
-            e.printStackTrace();
-            if (e.getClass().equals(JsonParseException.class)) {
-                return "ERR: INVALID_RESTAURANT_STRING";
-            } else {
-                return "ERR: " + e.getMessage();
-            }
+            return "ERR: INVALID_RESTAURANT_STRING";
         }
     }
 
@@ -232,12 +224,11 @@ public class YelpDBServer {
      * Takes in a client request, which specifically asks to add a certain user to the database.
      *
      * @param command, which:
-     *      - is not null.
-     *      - is a string with the keyword: ADDUSER.
-     *
+     *                 - is not null.
+     *                 - is a string with the keyword: ADDUSER.
      * @return a string, which:
-     *      - "USER_ADD_SUCCESS: + (details)" if the operation was successful.
-     *      - or an error message if the command was of invalid structure.
+     * - "USER_ADD_SUCCESS: + (details)" if the operation was successful.
+     * - or an error message if the command was of invalid structure.
      */
     private String addUser(String command) {
         // Check if command is of right format
@@ -247,20 +238,15 @@ public class YelpDBServer {
         String possibleJSONString = command.substring(addUserCommand.length());
 
         // Check required fields
-        if(!possibleJSONString.contains("name")) return "ERR: INVALID_USER_STRING";
+        if (!possibleJSONString.contains("name")) return "ERR: INVALID_USER_STRING";
 
         try {
             YelpUser yelpUser = database.addUser(possibleJSONString);
 
             return "USER_ADD_SUCCESS: " + new ObjectMapper().writeValueAsString(yelpUser).replaceAll(System.lineSeparator(), "")
-                    .replaceAll(",",", ").replaceAll("\":", "\": ");
+                    .replaceAll(",", ", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
-            if (e.getClass().equals(JsonParseException.class)) {
-                return "ERR: INVALID_USER_STRING";
-            } else {
-                e.printStackTrace();
-                return e.getMessage();
-            }
+            return "ERR: INVALID_USER_STRING";
         }
     }
 
@@ -268,12 +254,11 @@ public class YelpDBServer {
      * Takes in a client request, which specifically asks to add a certain review to the database.
      *
      * @param command, which:
-     *      - is not null.
-     *      - is a string with the keyword: ADDREVIEW.
-     *
+     *                 - is not null.
+     *                 - is a string with the keyword: ADDREVIEW.
      * @return a string, which:
-     *      - "REVIEW_ADD_SUCCESS: + (details)" if the operation was successful.
-     *      - or an error message if the command was of invalid structure.
+     * - "REVIEW_ADD_SUCCESS: + (details)" if the operation was successful.
+     * - or an error message if the command was of invalid structure.
      */
     private String addReview(String command) {
         // Check if legitimate command
@@ -289,14 +274,12 @@ public class YelpDBServer {
         if (!possibleJSONString.contains("user_id")) return "ERR: INVALID_REVIEW_STRING";
 
         try {
-        YelpReview yelpReview = database.addReview(possibleJSONString);
+            YelpReview yelpReview = database.addReview(possibleJSONString);
 
-        return "REVIEW_ADD_SUCCESS:" + new ObjectMapper().writeValueAsString(yelpReview).replaceAll(System.lineSeparator(), "")
-                .replaceAll(",",", ").replaceAll("\":", "\": ");
+            return "REVIEW_ADD_SUCCESS:" + new ObjectMapper().writeValueAsString(yelpReview).replaceAll(System.lineSeparator(), "")
+                    .replaceAll(",", ", ").replaceAll("\":", "\": ");
         } catch (Exception e) {
-            if (e.getClass().equals(JsonParseException.class)) {
-                return "ERR: INVALID_RESTAURANT_STRING";
-            } else return "ERR: " + e.getMessage();
+            return "ERR: INVALID_REVIEW_STRING";
         }
     }
 
@@ -304,15 +287,14 @@ public class YelpDBServer {
      * Takes in a client request, which is a specific query request.
      *
      * @param command, which:
-     *      - is not null.
-     *      - is a string with the keyword: QUERY.
-     *
+     *                 - is not null.
+     *                 - is a string with the keyword: QUERY.
      * @return a string, which:
-     *      - is a list of all possible restaurants satisfying the conditions of the input query request, in JSON format.
-     *      - or an error message if the command was of invalid structure or there are no possible matches in the database.
+     * - is a list of all possible restaurants satisfying the conditions of the input query request, in JSON format.
+     * - or an error message if the command was of invalid structure or there are no possible matches in the database.
      */
-    private String query(String command){
-        if(command.split( " ").length == 1) return "ERR: INVALID_QUERY";
+    private synchronized String query(String command) {
+        if (command.split(" ").length == 1) return "ERR: INVALID_QUERY";
 
         String queryString = command.substring(queryCommand.length());
 
@@ -322,9 +304,7 @@ public class YelpDBServer {
 
         Set<YelpRestaurant> matches = database.getMatches(queryString);
 
-        if (out.toString().length() != 0) {
-            return "ERR: INVALID_QUERY";
-        }
+        if (out.toString().length() != 0) return "ERR: INVALID_QUERY";
 
         // Bring back system err
         System.setErr(System.err);
@@ -334,13 +314,13 @@ public class YelpDBServer {
         try {
             StringBuilder stringBuilder = new StringBuilder();
             ObjectMapper mapper = new ObjectMapper();
-            for(YelpRestaurant restaurant : matches) {
+            for (YelpRestaurant restaurant : matches) {
                 stringBuilder.append(mapper.writeValueAsString(restaurant).replaceAll(System.lineSeparator(), "")
                         .replaceAll(",", ", ").replaceAll("\":", "\": "));
                 stringBuilder.append("\n");
             }
             return stringBuilder.toString();
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return "ERR: INVALID_QUERY";
         }
     }

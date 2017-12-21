@@ -46,7 +46,6 @@ public class QueryCreator extends QueryBaseListener {
 
     @Override
     public void enterOrExpr(QueryParser.OrExprContext ctx) {
-        String orStatement = ctx.getText();
 
         // If this has more than one possible OR pathway, we need to account for all of them
         numOrPaths = ctx.getChildCount() / 2 + 1;

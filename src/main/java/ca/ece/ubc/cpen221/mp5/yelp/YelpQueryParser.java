@@ -35,93 +35,92 @@ public class YelpQueryParser {
      * @return the set of YelpRestaurants that matches the query
      */
     public Set<YelpRestaurant> getMatches(String queryString) {
-        synchronized (database) {
-            Set<YelpRestaurant> allMatches = new HashSet<>();
+        Set<YelpRestaurant> allMatches = new HashSet<>();
 
-            // Get the parameters to match
-            this.getStringMatches(queryString);
+        // Get the parameters to match
+        this.getStringMatches(queryString);
 
-            for (YelpRestaurantQuery currentQuery : queries) {
-                // Get a list of all restaurants
-                List<YelpRestaurant> restaurantMatches = new ArrayList<>(database.getRestaurants());
+        for (YelpRestaurantQuery currentQuery : queries) {
+            // Get a list of all restaurants
+            List<YelpRestaurant> restaurantMatches = new ArrayList<>(database.getRestaurants());
 
-                // Check name
-                if (currentQuery.hasNameFilter())
-                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getName()
-                            .equals(currentQuery.getName())).collect(Collectors.toList());
+            // Check name
+            if (currentQuery.hasNameFilter())
+                restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getName()
+                        .equals(currentQuery.getName())).collect(Collectors.toList());
 
-                // Check neighborhoods
-                if (currentQuery.hasNeighborhoodFilter()) {
-                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods() != null)
-                            .filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods().contains(currentQuery.getNeighborhood())).collect(Collectors.toList());
-                }
-
-                // Check categories
-                if (currentQuery.hasCategoryFilter()) {
-                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getCategories() != null)
-                            .filter(yelpRestaurant -> yelpRestaurant.getCategories().contains(currentQuery.getCategory())).collect(Collectors.toList());
-                }
-
-                // Check prices
-                if (currentQuery.hasPriceFilter()) {
-                    switch (currentQuery.getPriceEquality()) {
-                        case ">=":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getPrice() >= currentQuery.getPrice()).collect(Collectors.toList());
-                            break;
-                        case "<=":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getPrice() <= currentQuery.getPrice()).collect(Collectors.toList());
-                            break;
-                        case "=":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getPrice() == currentQuery.getPrice()).collect(Collectors.toList());
-                            break;
-                        case ">":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getPrice() > currentQuery.getPrice()).collect(Collectors.toList());
-                            break;
-                        case "<":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getPrice() < currentQuery.getPrice()).collect(Collectors.toList());
-                            break;
-                    }
-                }
-
-                // Check ratings
-                if (currentQuery.hasRatingFilter()) {
-                    switch (currentQuery.getRatingEquality()) {
-                        case ">=":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getStars() >= currentQuery.getRating()).collect(Collectors.toList());
-                            break;
-                        case "<=":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getStars() <= currentQuery.getRating()).collect(Collectors.toList());
-                            break;
-                        // Factor in double arithmetic precision
-                        case "=":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getStars() == currentQuery.getRating()).collect(Collectors.toList());
-                            break;
-                        case ">":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getStars() > currentQuery.getRating()).collect(Collectors.toList());
-                            break;
-                        case "<":
-                            restaurantMatches = restaurantMatches.parallelStream()
-                                    .filter(yelpRestaurant -> yelpRestaurant.getStars() < currentQuery.getRating()).collect(Collectors.toList());
-                            break;
-                    }
-                }
-                allMatches.addAll(restaurantMatches);
+            // Check neighborhoods
+            if (currentQuery.hasNeighborhoodFilter()) {
+                restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods() != null)
+                        .filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods().contains(currentQuery.getNeighborhood())).collect(Collectors.toList());
             }
-            return allMatches;
+
+            // Check categories
+            if (currentQuery.hasCategoryFilter()) {
+                restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getCategories() != null)
+                        .filter(yelpRestaurant -> yelpRestaurant.getCategories().contains(currentQuery.getCategory())).collect(Collectors.toList());
+            }
+
+            // Check prices
+            if (currentQuery.hasPriceFilter()) {
+                switch (currentQuery.getPriceEquality()) {
+                    case ">=":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getPrice() >= currentQuery.getPrice()).collect(Collectors.toList());
+                        break;
+                    case "<=":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getPrice() <= currentQuery.getPrice()).collect(Collectors.toList());
+                        break;
+                    case "=":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getPrice() == currentQuery.getPrice()).collect(Collectors.toList());
+                        break;
+                    case ">":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getPrice() > currentQuery.getPrice()).collect(Collectors.toList());
+                        break;
+                    case "<":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getPrice() < currentQuery.getPrice()).collect(Collectors.toList());
+                        break;
+                }
+            }
+
+            // Check ratings
+            if (currentQuery.hasRatingFilter()) {
+                switch (currentQuery.getRatingEquality()) {
+                    case ">=":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getStars() >= currentQuery.getRating()).collect(Collectors.toList());
+                        break;
+                    case "<=":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getStars() <= currentQuery.getRating()).collect(Collectors.toList());
+                        break;
+                    // Factor in double arithmetic precision
+                    case "=":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getStars() == currentQuery.getRating()).collect(Collectors.toList());
+                        break;
+                    case ">":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getStars() > currentQuery.getRating()).collect(Collectors.toList());
+                        break;
+                    case "<":
+                        restaurantMatches = restaurantMatches.parallelStream()
+                                .filter(yelpRestaurant -> yelpRestaurant.getStars() < currentQuery.getRating()).collect(Collectors.toList());
+                        break;
+                }
+            }
+            allMatches.addAll(restaurantMatches);
         }
+        return allMatches;
     }
 
     /**
      * Parses the input query string and modifies the queries list that contains all possible filter cases
+     *
      * @param queryString is not null
      */
     private void getStringMatches(String queryString) {

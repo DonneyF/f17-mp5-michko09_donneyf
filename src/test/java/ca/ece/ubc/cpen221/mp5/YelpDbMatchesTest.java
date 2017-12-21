@@ -119,12 +119,12 @@ public class YelpDbMatchesTest {
 
     @Test
     public void test6() {
-        Set<YelpRestaurant> restaurantSet = db.getMatches("category(Chinese & Italian) || price = 5 || rating = 5");
+        Set<YelpRestaurant> restaurantSet = db.getMatches("category(Chinese & Italian) || price = 5 || rating >= 5");
 
         int numMatches = 0;
         for (YelpRestaurant currentRestaurant : allRestaurants) {
             if ((currentRestaurant.getCategories().contains("Chinese") && currentRestaurant.getCategories().contains("Italian"))
-                    || currentRestaurant.getPrice() == 5 || currentRestaurant.getStars() == 5) {
+                    || currentRestaurant.getPrice() == 5 || currentRestaurant.getStars() >= 5) {
                     numMatches++;
                     assertTrue(restaurantSet.contains(currentRestaurant));
             }

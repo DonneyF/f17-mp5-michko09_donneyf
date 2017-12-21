@@ -13,14 +13,16 @@ import java.util.List;
 
 /**
  * A Yelp Restaurant object. Stores information for a restaurant registered with Yelp
- * <p>
- * Representation Invariant: businessId is not null and type is business
- * <p>
- * Abstraction Function: AF(this) -> A Restaurant such that: neighborhood, longitude, latitude, address, city, and schools are abstractly located in state
  */
 @JsonDeserialize(using = YelpRestaurantDeserializer.class)
 @JsonSerialize(using = YelpRestaurantSerializer.class)
 public class YelpRestaurant implements Restaurant {
+
+    /*
+     * Representation Invariant: businessId is not null and type is business
+     *
+     * Abstraction Function: AF(this) -> A Restaurant such that: neighborhood, longitude, latitude, address, city, and schools are abstractly located in state
+     */
 
     // Non-JSON fields: businessId, reviewCount, photoUrl
     private boolean open;

@@ -12,22 +12,25 @@ import java.util.stream.Collectors;
  * LeastSquares utilizes the rating history of a specific user to create a customize function that predicts his/her
  * future ratings on a different restaurant using data in a current database in the future. Also uses linear regression
  * analysis to model the behavior as a linear function.
- *
- * Representation Invariant:
- * 		- Unless more elements are added into the regression analysis, a specific user only has one linear function
- * 		  to predict his/her future ratings.
- * 		- SxxAverage and SyyAverage must be positive.
- * 		- Sxx() and Syy() can only return positive doubles.
- * 		- Sxx(), Syy(), and Sxy() can return no more than one unique value anytime it is called for a specific user,
- * 		  unless input database conditions are changed.
- * 		- allStars and allPrices must be of the same size.
- *
- * Abstraction Function:
- * 		- Takes into account the users history in a database, specifically what ratings he/she gave to a restaurant
- * 		  with a specific price, and translates that behavior into a function that can predict what rating the user
- * 		  will give to a specific restaurant in the future.
  */
 public class LeastSquares {
+
+	/*
+	 *
+	 * Representation Invariant:
+	 * 		- Unless more elements are added into the regression analysis, a specific user only has one linear function
+	 * 		  to predict his/her future ratings.
+	 * 		- SxxAverage and SyyAverage must be positive.
+	 * 		- Sxx() and Syy() can only return positive doubles.
+	 * 		- Sxx(), Syy(), and Sxy() can return no more than one unique value anytime it is called for a specific user,
+	 * 		  unless input database conditions are changed.
+	 * 		- allStars and allPrices must be of the same size.
+	 *
+	 * Abstraction Function:
+	 * 		- Takes into account the users history in a database, specifically what ratings he/she gave to a restaurant
+	 * 		  with a specific price, and translates that behavior into a function that can predict what rating the user
+	 * 		  will give to a specific restaurant in the future.
+	 */
 	// Outline instance fields used in this class
 	private List<Double> allStars;
 	private List<Double> allPrices;
@@ -79,7 +82,7 @@ public class LeastSquares {
 		double Syy = Syy();
 		double Sxy = Sxy();
 		double b = Sxy / Sxx ;
-		double r_squared = Math.pow(Sxy , 2) / (Syy * Sxx );
+		//double r_squared = Math.pow(Sxy , 2) / (Syy * Sxx );
 		double a = SyyAverage - b * SxxAverage;
 
 		// a + x * b where x is the price of the restuarant

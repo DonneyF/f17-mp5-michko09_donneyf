@@ -13,20 +13,23 @@ import java.util.*;
  * setting a defined number of centroids and merging restaurants close to the centroid location with them
  * to create unique and distinct clusters, until a final stable status has been achieved.
  *
- * Representation Invariant:
- * 		- a restaurant must only be clustered to one unique centroid location, it cannot be shared.
- * 		- in the final iteration, restaurants clustered to a specific centroid must be closer to it it terms
- * 		  of distance than any other available centroid location.
- * 		- the keys of currentClusters must be equal to the number of required clusters in the database.
- * 		- the size of updatedCentroids must be equal to the number of required clusters.
- * 		- lastClusterPoints must only contain values that have been attained as centroid locations.
- *
- * Abstraction Function:
- * 		- using a known database, groups restaurants together to specific centroid locations using their
- * 	      geographical locations as indicators.
- * 	    - in other words, restaurants nearby one another in terms of location in the database are grouped together.
  */
 public class KMeans {
+
+	/*
+	 * Representation Invariant:
+	 * 		- a restaurant must only be clustered to one unique centroid location, it cannot be shared.
+	 * 		- in the final iteration, restaurants clustered to a specific centroid must be closer to it it terms
+	 * 		  of distance than any other available centroid location.
+	 * 		- the keys of currentClusters must be equal to the number of required clusters in the database.
+	 * 		- the size of updatedCentroids must be equal to the number of required clusters.
+	 * 		- lastClusterPoints must only contain values that have been attained as centroid locations.
+	 *
+	 * Abstraction Function:
+	 * 		- using a known database, groups restaurants together to specific centroid locations using their
+	 * 	      geographical locations as indicators.
+	 * 	    - in other words, restaurants nearby one another in terms of location in the database are grouped together.
+	 */
 	private static final double MAX_VALUE = 9999999;
 
 	private final Map<Point2D, Set<YelpRestaurant>> currentClusters;
