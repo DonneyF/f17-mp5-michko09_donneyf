@@ -5,9 +5,11 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * FibonacciClient is a client that sends requests to the FibonacciServer
+ * Adapted from GSathish's FibonacciServer
+ *
+ * YelpClient is a client that sends requests to the YelpServer
  * and interprets its replies.
- * A new FibonacciClient is "open" until the close() method is called,
+ * A new YelpClient is "open" until the close() method is called,
  * at which point it is "closed" and may not be used further.
  */
 public class YelpClient {
@@ -17,7 +19,7 @@ public class YelpClient {
     // Rep invariant: socket, in, out != null
 
     /**
-     * Make a FibonacciClient and connect it to a server running on
+     * Make a YelpClient and connect it to a server running on
      * hostname at the specified port.
      *
      * @throws IOException if can't connect
@@ -43,7 +45,7 @@ public class YelpClient {
      * Get a reply from the next request that was submitted.
      * Requires this is "open".
      *
-     * @return the requested Fibonacci number
+     * @return the YelpDBServer query response
      * @throws IOException if network or server failure
      */
     public String getReply() throws IOException {
@@ -80,9 +82,8 @@ public class YelpClient {
     }
 
     /**
-     * Use a FibonacciServer to find the first N Fibonacci numbers.
+     * Use a YelpServer to find the first N Fibonacci numbers.
      */
-    // NEED TO FIX THESE LINES, WILL DO TONIGHT
     public static void main(String[] args) {
         System.out.println("Enter the port number: ");
         Scanner scanner = new Scanner(System.in);
@@ -100,7 +101,6 @@ public class YelpClient {
                 System.out.println("Input next Command: ");
                 nextCommand = scanner.nextLine();
             }
-
 
             client.close();
         } catch (IOException ioe) {
