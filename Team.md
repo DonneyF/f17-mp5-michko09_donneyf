@@ -17,7 +17,7 @@
       - Implemented mainframe and structure of handling requests.
   - Implemented Querying with ANTLR
       - Separation of input queries into their atomic elements and finding all possible solutions.
-      - Initialized ANTLR and impleneted Grammar file.
+      - Initialized ANTLR and implemeted Grammar file.
 
 ## Both
   - Wrote specifications
