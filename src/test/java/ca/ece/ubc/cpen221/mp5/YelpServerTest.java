@@ -226,7 +226,23 @@ public class YelpServerTest {
             e.printStackTrace();
         }
 
-        System.out.println(serverResponse[0]);
-        assertTrue(serverResponse[0].length() > 5);
+        assertTrue((serverResponse[0].length() - serverResponse[0].replace("{", "").length()) == 9);
+    }
+
+    @Test
+    public void test7() {
+        // Invalid server query
+        if(!server.isAlive()) server.start();
+        final String[] serverResponse = new String[1];
+
+        try {
+            YelpClient yelpClient = new YelpClient("localhost", 4949);
+            yelpClient.sendRequest("QUERY in345t5ttt(Telegraph Ave) && (category(Chinese) teswg|| category(Italian)) && price <= 2");
+            serverResponse[0] = yelpClient.getReply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        assertTrue(serverResponse[0].contains("INVALID_QUERY"));
     }
 }

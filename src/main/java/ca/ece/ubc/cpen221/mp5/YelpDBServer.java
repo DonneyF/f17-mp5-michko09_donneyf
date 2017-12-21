@@ -263,7 +263,7 @@ public class YelpDBServer {
 
         String queryString = command.substring(queryCommand.length());
 
-        // Capture system.err
+        // Capture system.err to get ANTLR errors
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setErr(new PrintStream(out));
 
@@ -273,21 +273,20 @@ public class YelpDBServer {
             return "ERR: INVALID_QUERY";
         }
 
+        // Bring back system err
+        System.setErr(System.err);
+
         if (matches.isEmpty()) return "ERR: NO_MATCH";
 
-        System.out.println(matches);
-
         try {
-            return new ObjectMapper().writeValueAsString(matches).replaceAll(System.lineSeparator(), "")
-                    .replaceAll(",", ", ").replaceAll("\":", "\": ");
-/*            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = new StringBuilder();
             ObjectMapper mapper = new ObjectMapper();
             for(YelpRestaurant restaurant : matches) {
                 stringBuilder.append(mapper.writeValueAsString(restaurant).replaceAll(System.lineSeparator(), "")
                         .replaceAll(",", ", ").replaceAll("\":", "\": "));
                 stringBuilder.append("\n");
-            }*/
-            //return stringBuilder.toString();
+            }
+            return stringBuilder.toString();
         } catch (JsonProcessingException e) {
             return "ERR: INVALID QUERY";
         }

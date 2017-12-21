@@ -52,14 +52,14 @@ public class YelpQueryParser {
 
                 // Check neighborhoods
                 if (currentQuery.hasNeighborhoodFilter()) {
-                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods()
-                            .contains(currentQuery.getNeighborhood())).collect(Collectors.toList());
+                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods() != null)
+                            .filter(yelpRestaurant -> yelpRestaurant.getNeighborhoods().contains(currentQuery.getNeighborhood())).collect(Collectors.toList());
                 }
 
                 // Check categories
                 if (currentQuery.hasCategoryFilter()) {
-                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getCategories()
-                            .contains(currentQuery.getCategory())).collect(Collectors.toList());
+                    restaurantMatches = restaurantMatches.parallelStream().filter(yelpRestaurant -> yelpRestaurant.getCategories() != null)
+                            .filter(yelpRestaurant -> yelpRestaurant.getCategories().contains(currentQuery.getCategory())).collect(Collectors.toList());
                 }
 
                 // Check prices
