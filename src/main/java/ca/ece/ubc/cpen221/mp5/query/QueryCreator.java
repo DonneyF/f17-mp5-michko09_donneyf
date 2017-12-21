@@ -201,6 +201,13 @@ public class QueryCreator extends QueryBaseListener {
         }
     }
 
+    /**
+     * After creating all possible solutions paths that correspond to the input Query request, formatQuery() formats
+     * the solutions into a form that will be much simpler to convert to JSON format later in the process.
+     *
+     * Iterates through each major section and creates a more organized output using YelpRestaurantQuery, a data type
+     * that stores restaurant query information.
+     */
     private void formatQuery(){
         queries = new ArrayList<>();
         for(HashMap<String, String> currentNode : masterList) {
