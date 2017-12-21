@@ -3,7 +3,6 @@ package ca.ece.ubc.cpen221.mp5;
 import ca.ece.ubc.cpen221.mp5.query.QueryCreator;
 import ca.ece.ubc.cpen221.mp5.query.QueryLexer;
 import ca.ece.ubc.cpen221.mp5.query.QueryParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,7 +15,7 @@ public class QueryTests {
 
     @Test
     public void test1() {
-        CharStream stream = new ANTLRInputStream("in(The Sunny Side Caf\\u00e9) && (category(Chinese) || category(Italian)) && price <= 2");
+        CharStream stream = new ANTLRInputStream("in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2");
         QueryLexer lexer = new QueryLexer(stream);
         TokenStream tokens = new CommonTokenStream(lexer);
         QueryParser parser = new QueryParser(tokens);
@@ -26,9 +25,6 @@ public class QueryTests {
         ParseTreeWalker walker = new ParseTreeWalker();
         QueryCreator listener = new QueryCreator();
         walker.walk(listener, tree);
-
-        ObjectMapper mapper = new ObjectMapper();
-
 
         System.out.println(listener.getQueries());
     }
@@ -116,6 +112,37 @@ public class QueryTests {
         System.out.println(listener.getQueries());
     }
 
+    @Test
+    public void test7() {
+        CharStream stream = new ANTLRInputStream("name(Boston's Pizza) && rating = 5");
+        QueryLexer lexer = new QueryLexer(stream);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        QueryParser parser = new QueryParser(tokens);
+
+        ParseTree tree = parser.orExpr();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        QueryCreator listener = new QueryCreator();
+        walker.walk(listener, tree);
+
+        System.out.println(listener.getQueries());
+    }
+
+    @Test
+    public void test8() {
+        CharStream stream = new ANTLRInputStream("price = 5");
+        QueryLexer lexer = new QueryLexer(stream);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        QueryParser parser = new QueryParser(tokens);
+
+        ParseTree tree = parser.orExpr();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        QueryCreator listener = new QueryCreator();
+        walker.walk(listener, tree);
+
+        System.out.println(listener.getQueries());
+    }
 
 }
 
