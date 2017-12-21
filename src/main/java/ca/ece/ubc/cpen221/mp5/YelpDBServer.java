@@ -14,6 +14,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * YelpDBServer is a multithreaded server which takes an input command and
@@ -30,14 +31,15 @@ public class YelpDBServer {
     private ServerSocket serverSocket;
 
     // All valid commands for this server
-    private static final String getYelpRestaurant = "GETRESTAURANT";
-    private static final String addYelpRestaurant = "ADDRESTAURANT";
-    private static final String addUser = "ADDUSER";
-    private static final String addReview = "ADDREVIEW";
+    private static final String getRestaurantCommand = "GETRESTAURANT";
+    private static final String addRestaurantCommand = "ADDRESTAURANT";
+    private static final String addUserCommand = "ADDUSER";
+    private static final String addReviewCommand = "ADDREVIEW";
+    private static final String queryCommand = "QUERY";
 
     // Instance fields needed to create a database
     private YelpDb database;
-    private static final String YelpRestaurantsData = "data/restaurants.json";
+    private static final String restaurantData = "data/restaurants.json";
     private static final String reviewsData = "data/reviews.json";
     private static final String usersData = "data/users.json";
 
@@ -52,7 +54,7 @@ public class YelpDBServer {
      */
     public YelpDBServer(int port) throws IOException {
         serverSocket = new ServerSocket(port);
-        database = new YelpDb(YelpRestaurantsData, reviewsData, usersData);
+        database = new YelpDb(restaurantData, reviewsData, usersData);
     }
 
     /**
@@ -96,7 +98,7 @@ public class YelpDBServer {
      * @throws IOException if connection encounters an error
      */
     private void handle(Socket socket) throws IOException {
-        System.err.println("client connected");
+        //System.err.println("client connected");
 
         // get the socket's input stream, and wrap converters around it
         // that convert it from a byte stream to a character stream,
@@ -115,14 +117,14 @@ public class YelpDBServer {
             // each request is a single line containing a number
             for (String line = in.readLine(); line != null; line = in
                     .readLine()) {
-                System.err.println("request: " + line);
+                //System.err.println("request: " + line);
                 try {
                     String outcome = determineOperation(line);
                     // compute answer and send back to client
                     /*
                      * NEED TO FIX OUTPUT LINES
                      */
-                    System.err.println("reply: " + outcome);
+                    //System.err.println("reply: " + outcome);
                     out.println(outcome);
                 } catch (NumberFormatException e) { // NEED TO FIX THIS LINE
                     // complain about ill-formatted request
@@ -150,17 +152,18 @@ public class YelpDBServer {
      *                 4. ADDREVIEW - adds a review to the database, with all details included.
      */
     private String determineOperation(String command) {
-        if (command.contains(getYelpRestaurant)) return getYelpRestaurant(command);
-        else if (command.contains(addYelpRestaurant)) return addYelpRestaurant(command);
-        else if (command.contains(addUser)) return addUser(command);
-        else if (command.contains(addReview)) return addReview(command);
+        if (command.contains(getRestaurantCommand)) return getRestaurant(command);
+        else if (command.contains(addRestaurantCommand)) return addRestaurant(command);
+        else if (command.contains(addUserCommand)) return addUser(command);
+        else if (command.contains(addReviewCommand)) return addReview(command);
+        else if (command.contains(queryCommand)) return query(command);
         else return "ERR: ILLEGAL_REQUEST";
     }
 
     /**
      * @param command
      */
-    private String getYelpRestaurant(String command) {
+    private String getRestaurant(String command) {
         // Check if the input string is a valid command. Must contain at least one word.
         if (command.split(" ").length == 1) return "ERR: INVALID_RESTAURANT_STRING";
 
@@ -180,12 +183,12 @@ public class YelpDBServer {
         return "ERR: NO_SUCH_RESTAURANT";
     }
 
-    private String addYelpRestaurant(String command) {
+    private String addRestaurant(String command) {
         // Check if command is of right format
         if (command.split(" ").length == 1) return "ERR: INVALID_RESTAURANT_STRING";
 
         // Remove ADDRESTAURANT and get the string to parse
-        String possibleJSONString = command.substring(addYelpRestaurant.length());
+        String possibleJSONString = command.substring(addRestaurantCommand.length());
         // Check required fields
         if(!possibleJSONString.contains("name")) return "ERR: INVALID_RESTAURANT_STRING";
         if(!possibleJSONString.contains("latitude")) return "ERR: INVALID_RESTAURANT_STRING";
@@ -210,7 +213,7 @@ public class YelpDBServer {
         if (command.split(" ").length == 1) return "ERR: INVALID_USER_STRING";
 
         // Remove ADDUSER and get the JSON string to parse
-        String possibleJSONString = command.substring(addUser.length());
+        String possibleJSONString = command.substring(addUserCommand.length());
 
         // Check required fields
         if(!possibleJSONString.contains("name")) return "ERR: INVALID_USER_STRING";
@@ -235,8 +238,7 @@ public class YelpDBServer {
         if (command.split(" ").length == 1) return "ERR: INVALID_REVIEW_STRING";
 
         // Remove ADDREVIEW and get JSON string to parse
-        String possibleJSONString = command.substring(addReview.length());
-        System.out.println(possibleJSONString);
+        String possibleJSONString = command.substring(addReviewCommand.length());
 
         // Check required fields
         if (!possibleJSONString.contains("business_id")) return "ERR: INVALID_REVIEW_STRING";
@@ -253,6 +255,41 @@ public class YelpDBServer {
             if (e.getClass().equals(JsonParseException.class)) {
                 return "ERR: INVALID_RESTAURANT_STRING";
             } else return "ERR: " + e.getMessage();
+        }
+    }
+
+    private String query(String command){
+        if(command.split( " ").length == 1) return "ERR: INVALID_QUERY";
+
+        String queryString = command.substring(queryCommand.length());
+
+        // Capture system.err
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(out));
+
+        Set<YelpRestaurant> matches = database.getMatches(queryString);
+
+        if (out.toString().length() != 0) {
+            return "ERR: INVALID_QUERY";
+        }
+
+        if (matches.isEmpty()) return "ERR: NO_MATCH";
+
+        System.out.println(matches);
+
+        try {
+            return new ObjectMapper().writeValueAsString(matches).replaceAll(System.lineSeparator(), "")
+                    .replaceAll(",", ", ").replaceAll("\":", "\": ");
+/*            StringBuilder stringBuilder = new StringBuilder();
+            ObjectMapper mapper = new ObjectMapper();
+            for(YelpRestaurant restaurant : matches) {
+                stringBuilder.append(mapper.writeValueAsString(restaurant).replaceAll(System.lineSeparator(), "")
+                        .replaceAll(",", ", ").replaceAll("\":", "\": "));
+                stringBuilder.append("\n");
+            }*/
+            //return stringBuilder.toString();
+        } catch (JsonProcessingException e) {
+            return "ERR: INVALID QUERY";
         }
     }
 

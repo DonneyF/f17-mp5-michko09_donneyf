@@ -44,6 +44,8 @@ public class YelpRestaurantDeserializer extends JsonDeserializer<YelpRestaurant>
     public YelpRestaurant deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
+        ObjectMapper mapper = new ObjectMapper();
+
         YelpRestaurant restaurant = new YelpRestaurant(node.get(BUSINESS_ID).asText());
         if(node.has(OPEN)) restaurant.setOpen(node.get(OPEN).asBoolean());
         if(node.has(URL))  restaurant.setUrl(node.get(URL).asText());
@@ -57,8 +59,6 @@ public class YelpRestaurantDeserializer extends JsonDeserializer<YelpRestaurant>
         if(node.has(ADDRESS)) restaurant.setAddress(node.get(ADDRESS).asText());
         if(node.has(PRICE)) restaurant.setPrice(node.get(PRICE).asInt());
         if(node.has(STATE)) restaurant.setState(node.get(STATE).asText());
-
-        ObjectMapper mapper = new ObjectMapper();
         // Use to String to allow ObjectMapper to create lists
         if(node.has(SCHOOLS)) restaurant.setSchools(mapper.readValue(node.get(SCHOOLS).toString(), new TypeReference<ArrayList<String>>(){}));
         if(node.has(CATEGORIES))  restaurant.setCategories(mapper.readValue(node.get(CATEGORIES).toString(), new TypeReference<ArrayList<String>>(){}));

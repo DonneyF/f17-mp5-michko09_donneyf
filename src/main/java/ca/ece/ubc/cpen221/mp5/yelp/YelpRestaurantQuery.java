@@ -186,7 +186,7 @@ public class YelpRestaurantQuery {
      * @return a string containing a key-value relationship between the queries and the value to filter
      */
     @Override
-    public String toString() {
+    public synchronized String toString() {
         try {
             return new ObjectMapper().writeValueAsString(this).replaceAll(System.lineSeparator(), "")
                     .replaceAll(",", ", ").replaceAll("\":", "\": ");

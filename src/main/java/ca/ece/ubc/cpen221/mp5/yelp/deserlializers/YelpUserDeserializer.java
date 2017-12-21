@@ -33,13 +33,14 @@ public class YelpUserDeserializer extends JsonDeserializer<YelpUser> {
     public YelpUser deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
 
+        ObjectMapper mapper = new ObjectMapper();
+
         YelpUser user = new YelpUser(node.get(USER_ID).asText());
         if(node.has(URL)) user.setUrl(node.get(URL).asText());
         if(node.has(AVERAGE_STARS)) user.setAverageStars(node.get(AVERAGE_STARS).asDouble());
         if(node.has(NAME)) user.setName(node.get(NAME).asText());
         if(node.has(REVIEW_COUNT)) user.setReviewCount(node.get(REVIEW_COUNT).asInt());
 
-        ObjectMapper mapper = new ObjectMapper();
         if(node.has(VOTES)) user.setVotes(mapper.readValue(node.get(VOTES).toString(), YelpVotes.class));
 
         return user;

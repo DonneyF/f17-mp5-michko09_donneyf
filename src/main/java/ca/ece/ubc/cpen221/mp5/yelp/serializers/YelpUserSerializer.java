@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
+/**
+ * Jackson serializer for YelpUser
+ */
 public class YelpUserSerializer extends JsonSerializer<YelpUser> {
 
     private static final String USER_ID = "user_id";
@@ -17,6 +20,13 @@ public class YelpUserSerializer extends JsonSerializer<YelpUser> {
     private static final String VOTES = "votes";
     private static final String TYPE = "type";
 
+    /**
+     * Serialize YelpUser to JSON
+     * @param jgen is not null. This parameter will be modified
+     * @param provider is not null
+     * @modifies jgen will contain populated JSON fields
+     * @throws IOException if JsonParser is not in the correct format
+     */
     @Override
     public void serialize(YelpUser user, JsonGenerator jgen, SerializerProvider provider) throws IOException{
 

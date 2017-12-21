@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -140,7 +141,7 @@ public class YelpRestaurant implements Restaurant {
      * @param neighborhoods is not null
      */
     public void setNeighborhoods(List<String> neighborhoods) {
-        this.neighborhoods = new ArrayList<>(neighborhoods);
+        this.neighborhoods = Collections.synchronizedList(new ArrayList<>(neighborhoods));
     }
 
     /**
@@ -186,7 +187,7 @@ public class YelpRestaurant implements Restaurant {
      * @param categories is not null
      */
     public void setCategories(List<String> categories) {
-        this.categories = new ArrayList<>(categories);
+        this.categories = Collections.synchronizedList(new ArrayList<>(categories));
     }
 
     /**
@@ -324,7 +325,7 @@ public class YelpRestaurant implements Restaurant {
      * @param schools is not null and each string in schools abstractly represents the name of the school
      */
     public void setSchools(List<String> schools) {
-        this.schools = new ArrayList<>(schools);
+        this.schools = Collections.synchronizedList(new ArrayList<>(schools));
     }
 
     /**

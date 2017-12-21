@@ -3,6 +3,7 @@ package ca.ece.ubc.cpen221.mp5.yelp;
 import ca.ece.ubc.cpen221.mp5.MP5Database;
 import ca.ece.ubc.cpen221.mp5.statistics.KMeans;
 import ca.ece.ubc.cpen221.mp5.statistics.LeastSquares;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 
 /**
  * A Yelp database that stores information of restaurants, its reviews, and the users visiting these restaurants
- *
  */
 public class YelpDb extends MP5Database<YelpRestaurant> {
 
@@ -44,9 +44,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
     // Default user JSON objects
     static {
         String defaultUser = "{\"url\": \"http://www.yelp.com/user_details?userid=\", \"votes\": {}, \"review_count\": 0, \"type\": \"user\", \"user_id\": \"42\", \"average_stars\": 0}";
-
         String defaultRestaurant = "{\"open\": true, \"url\": \"http://www.yelp.com/biz/\", \"type\": \"business\", \"review_count\": 0}";
-
         String defaultReview = "{\"type\": \"review\", \"votes\": {}, \"review_id\": \"0a-pCW4guXIlWNpVeBHChg\", \"text\": \"Some text\"}";
 
         ObjectMapper mapper = new ObjectMapper();
@@ -63,8 +61,8 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * Constructs a YelpDb object
      *
      * @param restaurantFileName is not null
-     * @param reviewsFileName is not null
-     * @param usersFileName is not null
+     * @param reviewsFileName    is not null
+     * @param usersFileName      is not null
      */
     public YelpDb(String restaurantFileName, String reviewsFileName, String usersFileName) {
         users = parseJSON(usersFileName, YelpUser.class);
@@ -82,9 +80,9 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * Parses a file and returns a map of objects parsed by JSON
      *
      * @param filePath is not null and contains information of either a set of YelpRestaurants, YelpReviews, or YelpUsers
-     * @param tclass the class of either YelpRestaurants, YelpReviews, or YelpUsers
+     * @param tclass   the class of either YelpRestaurants, YelpReviews, or YelpUsers
      * @return A map of Strings to Objects where the String is the unique identifier of YelpRestaurants, YelpReviews, or YelpUsers,
-     *          and Objects contain YelpRestaurants, YelpReviews, or YelpUsers, respectively
+     * and Objects contain YelpRestaurants, YelpReviews, or YelpUsers, respectively
      */
     private ConcurrentHashMap parseJSON(String filePath, Class<?> tclass) {
         ConcurrentHashMap<String, Object> elements = new ConcurrentHashMap<>();
@@ -96,16 +94,17 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             BufferedReader br = new BufferedReader(new FileReader(file));
             while ((line = br.readLine()) != null) {
                 ObjectMapper mapper = new ObjectMapper();
+                mapper.getFactory().configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
                 Object element = mapper.readValue(line, tclass);
-                switch (tclass.getName()){
+                switch (tclass.getName()) {
                     case "ca.ece.ubc.cpen221.mp5.yelp.YelpRestaurant":
-                        elements.put(((YelpRestaurant)element).getBusinessId(), element);
+                        elements.put(((YelpRestaurant) element).getBusinessId(), element);
                         break;
                     case "ca.ece.ubc.cpen221.mp5.yelp.YelpUser":
-                        elements.put(((YelpUser)element).getUserId(), element);
+                        elements.put(((YelpUser) element).getUserId(), element);
                         break;
                     case "ca.ece.ubc.cpen221.mp5.yelp.YelpReview":
-                        elements.put(((YelpReview)element).getReviewId(), element);
+                        elements.put(((YelpReview) element).getReviewId(), element);
                         break;
                 }
             }
@@ -121,7 +120,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @return the string representation of the set of YelpRestaurants, YelpReviews, and YelpUsers
      */
     @Override
-    public String toString(){
+    public String toString() {
         return restaurants.toString() + reviews.toString() + users.toString();
     }
 
@@ -158,7 +157,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param userId represents a user stored in this database
      * @return a YelpUser that contains userId
      */
-    public YelpUser getUser(String userId){
+    public YelpUser getUser(String userId) {
         return users.get(userId);
     }
 
@@ -168,7 +167,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param restaurantId represents a restaurant stored in this database
      * @return a YelpRestaurant that contains restaurantId
      */
-    public YelpRestaurant getRestaurant(String restaurantId){
+    public YelpRestaurant getRestaurant(String restaurantId) {
         return restaurants.get(restaurantId);
     }
 
@@ -178,7 +177,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param reviewId represents a review stored in this database
      * @return a YelpReview that contains reviewId
      */
-    public YelpReview getReview(String reviewId){
+    public YelpReview getReview(String reviewId) {
         return reviews.get(reviewId);
     }
 
@@ -188,7 +187,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param userJson is a String of JSON containing user data. userJson must contain an entry for "name".
      * @return the YelpUser created by this method with fields defaulted.
      */
-    public YelpUser addUser(String userJson){
+    public YelpUser addUser(String userJson) {
         ObjectNode user = genericUser.deepCopy();
 
         ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
@@ -198,7 +197,10 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             // Get a random ID
             String id = generateRandomID();
             // Parse user ID and url. Input must contain user's name
-            if (!input.toString().contains("name")) throw new IllegalArgumentException();
+            if (!input.toString().contains("name"))
+                throw new IllegalArgumentException("Input string not valid. Missing \"name\" field");
+            if (input.has("user_id") && IDs.contains(input.get("user_id").asText()))
+                throw new IllegalArgumentException("User ID already exists");
 
             input.put("user_id", id);
             input.put("url", user.get("url").asText() + id);
@@ -209,9 +211,8 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
 
             users.put(id, yelpUser);
             return yelpUser;
-
-        } catch (Exception e){
-            throw new IllegalArgumentException("Input string not valid. Missing \"name\" field");
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -221,7 +222,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param restaurantJson is a String of JSON containing restaurant data. userJson must contain an entry for "name".
      * @return the YelpRestaurant created by this method with fields defaulted.
      */
-    public YelpRestaurant addRestaurant(String restaurantJson){
+    public YelpRestaurant addRestaurant(String restaurantJson) {
         ObjectNode restaurant = genericRestaurant.deepCopy();
 
         ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
@@ -231,7 +232,11 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             // Get a random ID
             String id = generateRandomID();
             // Parse user ID and url. Input must contain business name
-            if (!input.toString().contains("name")) throw new IllegalArgumentException();
+            if (!input.toString().contains("name"))
+                throw new IllegalArgumentException("Input string not valid. Missing \"name\" field");
+            if (input.has("business_id") && IDs.contains(input.get("business_id").asText()))
+                throw new IllegalArgumentException("Business ID already exists");
+
             input.put("business_id", id);
             input.put("url", restaurant.get("url").asText() + input.get("name").asText().toLowerCase()
                     .replaceAll("\\s", "-").replaceAll("[^a-z0-9-]", ""));
@@ -243,7 +248,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             return yelpRestaurant;
 
         } catch (Exception e) {
-            throw new IllegalArgumentException("Input string not valid. Missing \"name\" field");
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -253,7 +258,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param reviewJson is a String of JSON containing review data. userJson must contain an entry for "text".
      * @return the YelpReview created by this method with fields defaulted.
      */
-    public YelpReview addReview(String reviewJson){
+    public YelpReview addReview(String reviewJson) {
         ObjectNode review = genericReview.deepCopy();
 
         ObjectMapper mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY);
@@ -264,7 +269,10 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             String id = generateRandomID();
             // Parse user ID and url. Input must contain business name
 
-            if (!input.toString().contains("text")) throw new IllegalArgumentException();
+            if (!input.toString().contains("text"))
+                throw new IllegalArgumentException("Input string not valid. Missing \"text\" field");
+            if (input.has("review_id") && IDs.contains(input.get("review_id").asText()))
+                throw new IllegalArgumentException("Review ID already exists");
             input.put("review_id", id);
             review.setAll(input);
 
@@ -273,8 +281,8 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
 
             return yelpReview;
 
-        } catch (Exception e){
-            throw new IllegalArgumentException("Input string not valid. Missing \"text\" field");
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
@@ -284,28 +292,26 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
      * @param queryString is not null
      * @return the set of YelpRestaurants that matches the query
      */
-    public Set<YelpRestaurant> getMatches(String queryString) {
+    public synchronized Set<YelpRestaurant> getMatches(String queryString) {
         return new YelpQueryParser(this).getMatches(queryString);
     }
 
     /**
      * Cluster objects into k clusters using k-means clustering
      *
-     * @param k
-     *            number of clusters to create (0 < k <= number of objects)
+     * @param k number of clusters to create (0 < k <= number of objects)
      * @return a String, in JSON format, that represents the clusters
      */
     public String kMeansClusters_json(int k) {
-       return new KMeans(getRestaurants(), k).toJson();
+        return new KMeans(getRestaurants(), k).toJson();
     }
 
     /**
-     * @param user
-     *            represents a user_id in the database
+     * @param user represents a user_id in the database
      * @return a function that predicts the user's ratings for objects (of type
-     *         T) in the database of type MP5Db<T>. The function that is
-     *         returned takes two arguments: one is the database and other other
-     *         is a String that represents the id of an object of type T.
+     * T) in the database of type MP5Db<T>. The function that is
+     * returned takes two arguments: one is the database and other other
+     * is a String that represents the id of an object of type T.
      */
     public ToDoubleBiFunction<YelpDb, String> getPredictorFunction(String user) {
         LeastSquares leastSquares = new LeastSquares(this);
@@ -323,6 +329,7 @@ public class YelpDb extends MP5Database<YelpRestaurant> {
             potentialID = UUID.randomUUID().toString().replaceAll("[\\-]", "").substring(0, 22);
         } while (IDs.contains(potentialID));
 
+        IDs.add(potentialID);
         return potentialID;
     }
 }

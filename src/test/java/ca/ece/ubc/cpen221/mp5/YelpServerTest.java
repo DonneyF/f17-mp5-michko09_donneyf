@@ -45,7 +45,6 @@ public class YelpServerTest {
 
         client.start();
         try {
-
             client.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -191,10 +190,9 @@ public class YelpServerTest {
     }
 
     @Test
-    public void test5() {
+    public void test5() throws InterruptedException {
         // Test invalid strings
         if(!server.isAlive()) server.start();
-        final String[] serverResponse = new String[1];
         try {
             YelpClient yelpClient = new YelpClient("localhost", 4949);
             yelpClient.sendRequest("ADDRESTAURANT {\"longitude\": -122.5122, \"latitude\": 37.98541, \"state\": \"CA\", \"price\": 1}");
@@ -212,5 +210,23 @@ public class YelpServerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void test6() {
+        // Server query
+        if(!server.isAlive()) server.start();
+        final String[] serverResponse = new String[1];
+
+        try {
+            YelpClient yelpClient = new YelpClient("localhost", 4949);
+            yelpClient.sendRequest("QUERY in(Telegraph Ave) && (category(Chinese) || category(Italian)) && price <= 2");
+            serverResponse[0] = yelpClient.getReply();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(serverResponse[0]);
+        assertTrue(serverResponse[0].length() > 5);
     }
 }

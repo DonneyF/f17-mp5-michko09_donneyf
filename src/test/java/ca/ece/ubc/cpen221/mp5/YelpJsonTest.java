@@ -184,4 +184,19 @@ public class YelpJsonTest {
         }
     }
 
+    @Test
+    public void test7(){
+        // Test non-standard characters
+        String business = "{\"open\": true, \"url\": \"http://www.yelp.com/biz/the-sunny-side-caf%C3%A9-berkeley-2\", \"longitude\": -122.2658691, \"neighborhoods\": [\"Downtown Berkeley\", \"UC Campus Area\"], \"business_id\": \"PC-x4Om-XXGqFn0ludTykw\", \"name\": \"The Sunny Side Caf\\u00e9\", \"categories\": [\"Breakfast & Brunch\", \"Restaurants\"], \"state\": \"CA\", \"type\": \"business\", \"stars\": 3.5, \"city\": \"Berkeley\", \"full_address\": \"2136 Oxford St\\nDowntown Berkeley\\nBerkeley, CA 94704\", \"review_count\": 175, \"photo_url\": \"http://s3-media3.ak.yelpcdn.com/bphoto/NMgMutTLuSShNGQYt9NRJQ/ms.jpg\", \"schools\": [\"University of California at Berkeley\"], \"latitude\": 37.8701853, \"price\": 3}";
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            YelpRestaurant restaurant = mapper.readValue(business, YelpRestaurant.class);
+
+            //System.out.println(business);
+            System.out.println(restaurant.getName());
+        } catch (Exception e){
+            fail(e.getMessage());
+        }
+    }
 }

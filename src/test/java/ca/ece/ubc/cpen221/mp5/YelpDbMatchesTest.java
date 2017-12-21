@@ -116,6 +116,7 @@ public class YelpDbMatchesTest {
         }
         assertEquals(numMatches, restaurantSet.size());
     }
+
     @Test
     public void test6() {
         Set<YelpRestaurant> restaurantSet = db.getMatches("category(Chinese & Italian) || price = 5 || rating = 5");
@@ -126,6 +127,20 @@ public class YelpDbMatchesTest {
                     || currentRestaurant.getPrice() == 5 || currentRestaurant.getStars() == 5) {
                     numMatches++;
                     assertTrue(restaurantSet.contains(currentRestaurant));
+            }
+        }
+        assertEquals(numMatches, restaurantSet.size());
+    }
+
+    @Test
+    public void test7() {
+        // Non-ASCII characters
+        Set<YelpRestaurant> restaurantSet = db.getMatches("name(The Sunny Side Caf\u00e9) && price <= 4");
+        int numMatches = 0;
+        for (YelpRestaurant currentRestaurant : allRestaurants) {
+            if ((currentRestaurant.getName().equals("The Sunny Side Caf\u00e9") && currentRestaurant.getPrice() <= 4)) {
+                System.out.println(currentRestaurant);
+                numMatches++;
             }
         }
         assertEquals(numMatches, restaurantSet.size());

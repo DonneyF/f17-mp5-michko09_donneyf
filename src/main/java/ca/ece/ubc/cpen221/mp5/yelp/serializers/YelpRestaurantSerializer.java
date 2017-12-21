@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import java.io.IOException;
 
+/**
+ * Jackson serializer for YelpRestaurant
+ */
 public class YelpRestaurantSerializer extends JsonSerializer<YelpRestaurant> {
 
     // String constants for JSON fields
@@ -28,10 +31,18 @@ public class YelpRestaurantSerializer extends JsonSerializer<YelpRestaurant> {
     private static final String STATE = "state";
     private static final String TYPE = "type";
 
+    /**
+     * Serialize YelpRestaurant to JSON
+     * @param jgen is not null. This parameter will be modified
+     * @param provider is not null
+     * @modifies jgen will contain populated JSON fields
+     * @throws IOException if JsonParser is not in the correct format
+     */
     @Override
     public void serialize(YelpRestaurant restaurant, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
         jgen.writeStartObject();
+        jgen.configure(JsonGenerator.Feature.ESCAPE_NON_ASCII, true);
         jgen.writeBooleanField(OPEN,restaurant.isOpen());
         jgen.writeStringField(URL,restaurant.getUrl());
         jgen.writeNumberField(LONGITUDE,restaurant.getLongitude());
