@@ -341,7 +341,7 @@ public class YelpDBServer {
             }
             return stringBuilder.toString();
         } catch (JsonProcessingException e) {
-            return "ERR: INVALID QUERY";
+            return "ERR: INVALID_QUERY";
         }
     }
 
