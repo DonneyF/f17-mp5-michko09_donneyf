@@ -5,18 +5,28 @@ import java.net.Socket;
 import java.util.Scanner;
 
 /**
- * Adapted from GSathish's FibonacciServer
+ * YelpClient is a server-client initiator which creates a socket that will be attached to a main server. Through this
+ * client model a user will be able to input certain requests into the server that involve modifying or searching for
+ * an element in the database.
+
+ * YelpClient in this MP is mainly used for a local host server: Port 4949.
  *
- * YelpClient is a client that sends requests to the YelpServer
- * and interprets its replies.
- * A new YelpClient is "open" until the close() method is called,
- * at which point it is "closed" and may not be used further.
+ * Representation Invariant:
+ *      - Once an instance of a client has been initialized with a specific port number, it must keep that port
+ *        number until it has been terminated or disconnected from the server.
+ *      - A request made by the client will have a response given by the server, whether it be a solution or an
+ *        error message from improper request formatting.
+ *      - socket, in and out are not null.
+ *
+ * Abstraction Function:
+ *      - Not valid since this class does not "map" a specific value to a specific domain. It simply initiates a client.
+ *
+ * As with YelpDBServer, we are using the FibonnaciClient example Professor Sathish mentioned in the README file.
  */
 public class YelpClient {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    // Rep invariant: socket, in, out != null
 
     /**
      * Make a YelpClient and connect it to a server running on
@@ -31,12 +41,20 @@ public class YelpClient {
     }
 
     /**
-     * Send a request to the server. Requires this is "open".
+     * Send a request to the server. Requires this is "open". The valid commands for this
+     * MP are specified below.
      *
-     * @param command to find Fibonacci(x)
+     * @param command which,
+     *      - is one of the five valid commands:
+     *        1. ADDRESTAURANT + (details in JSON)
+     *        2. ADDUSER + (details in JSON)
+     *        3. ADDREVIEW + (details in JSON)
+     *        4. GETRESTAURANT + Name
+     *        5. QUERY + criteria
+     *
      * @throws IOException if network or server failure
      */
-    public void sendRequest(String command) {
+    public void sendRequest(String command) throws IOException  {
         out.print(command + "\n");
         out.flush(); // important! make sure x actually gets sent
     }
@@ -45,7 +63,8 @@ public class YelpClient {
      * Get a reply from the next request that was submitted.
      * Requires this is "open".
      *
-     * @return the YelpDBServer query response
+     * @return the server response to the client command.
+     *
      * @throws IOException if network or server failure
      */
     public String getReply() throws IOException {
@@ -82,7 +101,8 @@ public class YelpClient {
     }
 
     /**
-     * Use a YelpServer to find the first N Fibonacci numbers.
+     * Connects to a main YelpDBServer where the client can input certain commands and obtain
+     * a response from the server, whether that be an approval message, possible solution, or error message.
      */
     public static void main(String[] args) {
         System.out.println("Enter the port number: ");

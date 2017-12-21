@@ -17,14 +17,23 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * YelpDBServer is a multithreaded server which takes an input command and
- * returns the results relating to the input. If no results are found or if
- * the input request is not valid then it throws an IllegalArgumentException.
- * <p>
- * This server will accept requests in the form:
- * Request ::=
- * <p>
- * MAKE SURE TO WRITE THIS.
+ * YelpDBServer is a multithreaded server which takes an input command from a client and returns the results
+ * relating to the input. If no results are found or if the input request is not valid then it throws an
+ * appropriate error message. Since YelpDBServer is a multithreaded server multiple clients are able to connect
+ * to the server and send requests at the same time.
+ *
+ * YelpDBServer in this MP is mainly used for a local host server: Port 4949.
+ *
+ * Representation Invariant:
+ *      - Once an instance of a server has been initialized with a specific port number, it must keep that port
+ *        number until it has been terminated or shut down.
+ *      - A request made by the client will have a response given by the server, whether it be a solution or an
+ *        error message from improper request formatting.
+ *
+ * Abstraction Function:
+ *      - Not valid since this class does not "map" a specific value to a specific domain. It simply initiates a server.
+ *
+ * As with YelpClient, we are using the FibonnaciMultiServer example Professor Sathish mentioned in the README file.
  */
 public class YelpDBServer {
 
@@ -59,17 +68,15 @@ public class YelpDBServer {
 
     /**
      * Runs the server as it listens for input connections and handles them.
-     * This method is taken from the FibonacciServerMulti.java that Professor Sathish
-     * has provided as reference.
      *
      * @throws IOException, if:
      *                      - the main server socket is broken.s
      */
     public void serve() throws IOException {
         while (true) {
-            // block until a client connects
+            // Block until a client connects
             final Socket socket = serverSocket.accept();
-            // create a new thread to handle that client
+            // Create a new thread to handle that client
             Thread handler = new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -79,14 +86,12 @@ public class YelpDBServer {
                             socket.close();
                         }
                     } catch (IOException ioe) {
-                        // this exception wouldn't terminate serve(),
-                        // since we're now on a different thread, but
-                        // we still need to handle it
+                        // Print the steps leading to the exception
                         ioe.printStackTrace();
                     }
                 }
             });
-            // start the thread
+            // Start the thread
             handler.start();
         }
     }
@@ -98,42 +103,34 @@ public class YelpDBServer {
      * @throws IOException if connection encounters an error
      */
     private void handle(Socket socket) throws IOException {
-        //System.err.println("client connected");
 
-        // get the socket's input stream, and wrap converters around it
-        // that convert it from a byte stream to a character stream,
-        // and that buffer it so that we can read a line at a time
+        // Read the input stream from the socket and wrap it to convert the stream from
+        // a byte stream to a character stream. We then buffer the stream so that we
+        // read one line at a time.
         BufferedReader in = new BufferedReader(new InputStreamReader(
                 socket.getInputStream()));
 
-        // similarly, wrap character=>bytestream converter around the
-        // socket output stream, and wrap a PrintWriter around that so
-        // that we have more convenient ways to write Java primitive
-        // types to it.
+        // We repeat the same process of the output stream of the socket, except in
+        // this case we wrap it in a PrintWriter.
         PrintWriter out = new PrintWriter(new OutputStreamWriter(
                 socket.getOutputStream()), true);
 
         try {
-            // each request is a single line containing a number
+            // Read each request made by the client(s)
             for (String line = in.readLine(); line != null; line = in
                     .readLine()) {
-                //System.err.println("request: " + line);
                 try {
+                    // Determine the operation type of the request
                     String outcome = determineOperation(line);
-                    // compute answer and send back to client
-                    /*
-                     * NEED TO FIX OUTPUT LINES
-                     */
-                    //System.err.println("reply: " + outcome);
+
+                    // Return the result stemming from the operation, or an error
+                    // message if the input request is invalid
                     out.println(outcome);
-                } catch (NumberFormatException e) { // NEED TO FIX THIS LINE
+                } catch (NumberFormatException e) {
                     // complain about ill-formatted request
                     System.err.println("reply: err");
                     out.print("err\n");
                 }
-                // important! our PrintWriter is auto-flushing, but if it were
-                // not:
-                // out.flush();
             }
         } finally {
             out.close();
@@ -142,7 +139,7 @@ public class YelpDBServer {
     }
 
     /**
-     * Determine what kind of operation the input command is from the user.
+     * Determines what kind of operation the input command is from the user.
      *
      * @param command, which:
      *                 - is one of four command options for the YelpDB:
@@ -150,6 +147,10 @@ public class YelpDBServer {
      *                 2. ADDUSER - adds a user to the database, with all details included.
      *                 3. ADDYelpRestaurant - adds a YelpRestaurant to the database, with all details included.
      *                 4. ADDREVIEW - adds a review to the database, with all details included.
+     *                 5. QUERY - searches for a restaurant in the database, keeping in mind specific criteria.
+     *
+     * @return a string, which:
+     *                 - is the result from the input request, or an error message if the input string is invalid.
      */
     private String determineOperation(String command) {
         if (command.contains(getRestaurantCommand)) return getRestaurant(command);
@@ -161,7 +162,15 @@ public class YelpDBServer {
     }
 
     /**
-     * @param command
+     * Takes in a client request, which specifically asks to find a certain restaurant in the database.
+     *
+     * @param command, which:
+     *      - is not null.
+     *      - is a string with the keyword: GETRESTAURANT.
+     *
+     * @return a string, which:
+     *      - is the restaurant result from the database search.
+     *      - or an error message if no such restaurant exists or the input command was of invalid structure.
      */
     private String getRestaurant(String command) {
         // Check if the input string is a valid command. Must contain at least one word.
@@ -183,6 +192,17 @@ public class YelpDBServer {
         return "ERR: NO_SUCH_RESTAURANT";
     }
 
+    /**
+     * Takes in a client request, which specifically asks to add a certain restaurant to the database.
+     *
+     * @param command, which:
+     *      - is not null.
+     *      - is a string with the keyword: ADDRESTAURANT.
+     *
+     * @return a string, which:
+     *      - "RESTAURANT_ADD_SUCCESS: + (details)" if the operation was successful.
+     *      - or an error message if the command was of invalid structure.
+     */
     private String addRestaurant(String command) {
         // Check if command is of right format
         if (command.split(" ").length == 1) return "ERR: INVALID_RESTAURANT_STRING";
@@ -208,6 +228,17 @@ public class YelpDBServer {
         }
     }
 
+    /**
+     * Takes in a client request, which specifically asks to add a certain user to the database.
+     *
+     * @param command, which:
+     *      - is not null.
+     *      - is a string with the keyword: ADDUSER.
+     *
+     * @return a string, which:
+     *      - "USER_ADD_SUCCESS: + (details)" if the operation was successful.
+     *      - or an error message if the command was of invalid structure.
+     */
     private String addUser(String command) {
         // Check if command is of right format
         if (command.split(" ").length == 1) return "ERR: INVALID_USER_STRING";
@@ -233,6 +264,17 @@ public class YelpDBServer {
         }
     }
 
+    /**
+     * Takes in a client request, which specifically asks to add a certain review to the database.
+     *
+     * @param command, which:
+     *      - is not null.
+     *      - is a string with the keyword: ADDREVIEW.
+     *
+     * @return a string, which:
+     *      - "REVIEW_ADD_SUCCESS: + (details)" if the operation was successful.
+     *      - or an error message if the command was of invalid structure.
+     */
     private String addReview(String command) {
         // Check if legitimate command
         if (command.split(" ").length == 1) return "ERR: INVALID_REVIEW_STRING";
@@ -258,6 +300,17 @@ public class YelpDBServer {
         }
     }
 
+    /**
+     * Takes in a client request, which is a specific query request.
+     *
+     * @param command, which:
+     *      - is not null.
+     *      - is a string with the keyword: QUERY.
+     *
+     * @return a string, which:
+     *      - is a list of all possible restaurants satisfying the conditions of the input query request, in JSON format.
+     *      - or an error message if the command was of invalid structure or there are no possible matches in the database.
+     */
     private String query(String command){
         if(command.split( " ").length == 1) return "ERR: INVALID_QUERY";
 
