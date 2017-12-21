@@ -11,10 +11,13 @@
     
 
 ## Michael Ko:
-  - Implented K-Means Clustering (with specs)
-  - Implemented Least Squared Regression (with specs)
-  - Implemented Client Server Structure 
+  - Implented K-Means Clustering
+  - Implemented Least Squared Regression
+  - Implemented Client Server Structure
+      - Implemented mainframe and structure of handling requests.
   - Implemented Querying with ANTLR
+      - Separation of input queries into their atomic elements and finding all possible solutions.
+      - Initialized ANTLR and impleneted Grammar file.
 
 ## Both
   - Wrote specifications
